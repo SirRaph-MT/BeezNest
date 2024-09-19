@@ -1,7 +1,7 @@
-nav{
-    background-color:lightslategray !important; 
-    color:mediumturquoise !important;
-
+nav {
+    background-color: lightslategray !important;
+    color: mediumturquoise !important;
+    border: 2px solid black;
 }
 
 html {
