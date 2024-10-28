@@ -1,32 +1,53 @@
-
-/*.sidebar {
-    margin: 0;
-    padding: 0;
-    width: 200px;
-    background-color: lightslategray;
+.offcanvas-static {
     position: fixed;
+    top: 55px;
+    left: 0;
+    width: 250px;
     height: 100%;
-    overflow: auto;
-}*/
+    background-color: #f8f9fa;
+    transition: transform 0.3s ease-in-out;
+    z-index: 1030;
+    border: solid #0196E7;
+  
+}
 
-.sidebar a {
+    .offcanvas-static.hidden {
+        transform: translateX(-100%);
+    }
+
+.sidebar .offcanvas-body a {
     display: block;
-    color: black;
-    padding: 16px;
+    padding: 10px;
+    color: #000;
     text-decoration: none;
 }
 
-    .sidebar a.active {
-        background-color: lightslategrey;
-        color: black;
+    .sidebar .offcanvas-body a.active {
+        background-color: #ddd;
     }
-
-    .sidebar a:hover:not(.active) {
-        background-color: #b2b2b2;
-        color: black;
-    }
-
-.sidebar .offcanvas-start {
-    width:280px!important;
+.sidebar a:hover:not(.active) {
+    background-color: #0196E7;
+    color: white;
 }
 
+.page-wrapper{
+    margin-left:250px;
+    margin-top: 75px;
+}
+
+.card {
+    transition: transform 0.3s;
+}
+
+    .card:hover {
+        transform: scale(1.05); /* Slightly enlarge the card */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+    }
+
+.add-to-cart {
+    display: none; /* Initially hide the button */
+}
+
+.card:hover .add-to-cart {
+    display: block; /* Show the button on hover */
+}

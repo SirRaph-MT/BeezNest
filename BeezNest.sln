@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35222.181
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BeezNest", "BeezNest\BeezNest.csproj", "{30D0777D-DD8B-45FE-8E95-D7498E56E08C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BeezNest", "BeezNest\BeezNest.csproj", "{30D0777D-DD8B-45FE-8E95-D7498E56E08C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Logic", "Logic\Logic.csproj", "{FA40E975-7A63-4CEE-B954-F8C442F69309}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{30B2F988-4B00-4E08-A1CE-27E69A3EF4A2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{30D0777D-DD8B-45FE-8E95-D7498E56E08C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{30D0777D-DD8B-45FE-8E95-D7498E56E08C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{30D0777D-DD8B-45FE-8E95-D7498E56E08C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA40E975-7A63-4CEE-B954-F8C442F69309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA40E975-7A63-4CEE-B954-F8C442F69309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA40E975-7A63-4CEE-B954-F8C442F69309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA40E975-7A63-4CEE-B954-F8C442F69309}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30B2F988-4B00-4E08-A1CE-27E69A3EF4A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30B2F988-4B00-4E08-A1CE-27E69A3EF4A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30B2F988-4B00-4E08-A1CE-27E69A3EF4A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30B2F988-4B00-4E08-A1CE-27E69A3EF4A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

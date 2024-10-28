@@ -1,0 +1,93 @@
+﻿@model Core.Models.UploadProduct
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="d-flex justify-content-center align-items-center my-4">
+    <div class="border p-4 rounded" style="max-width: 900px; width: 100%;">
+        <div class="row">
+            <div class="col-6">
+                <div class="mb-3">
+                    <img id="mainImage" src="@Model.ProductImages.FirstOrDefault()?.ImageUrl" class="img-fluid" alt="@Model.ProductsModel" style="height: 400px; object-fit: cover; border-radius: 5px;" />
+                </div>
+                <div class="d-flex justify-content-between">
+                    @foreach (var image in Model.ProductImages.Take(4)) // Display up to 4 images as thumbnails
+                    {
+                        <img src="@image.ImageUrl" class="img-thumbnail me-1" style="height: 75px; padding: 2px; margin: 0;" alt="Thumbnail" onclick="changeImage('@image.ImageUrl')" />
+                    }
+                </div>
+            </div>
+
+            <!-- Product Details Section -->
+            <div class="col-6">
+                <p><strong>Product: </strong>@Model.ProductsModel</p>
+                <p><strong>Specifications: </strong>@Model.Specifications</p>
+                <p><strong>Price: </strong>#@Model.Price?.ToString("N2")</p>
+                <p><strong>Available Items: </strong>@Model.NumberOfItem</p>
+                <p><strong>Available Colors:</strong></p>
+                <ul>
+                    @if (!string.IsNullOrEmpty(Model.Colors))
+                    {
+                        foreach (var color in Model.Colors.Split(','))
+                        {
+                            <li>@color.Trim()</li>
+                        }
+                    }
+                    else
+                    {
+                        <li>No specific colors available</li>
+                    }
+                </ul>
+
+             
+                <div class="d-flex align-items-center mb-3">
+                    <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity()">-</button>
+                    <input type="text" id="quantityInput" value="1" class="form-control text-center mx-2" style="width: 60px;" readonly />
+                    <button type="button" class="btn btn-outline-secondary" onclick="increaseQuantity()">+</button>
+                </div>
+     
+                <button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Image Switching and Quantity Control -->
+<script>
+    var maxQuantity = @Model.NumberOfItem;
+    var quantityInput = document.getElementById('quantityInput');
+
+    function decreaseQuantity() {
+        var currentValue = parseInt(quantityInput.value);
+        if (currentValue > 1) {
+            quantityInput.value = currentValue - 1;
+        }
+    }
+
+    function increaseQuantity() {
+        debugger
+        var currentValue = parseInt(quantityInput.value);
+        if (currentValue < maxQuantity) {
+            quantityInput.value = currentValue + 1;
+        }
+    }
+
+    function changeImage(imageUrl) {
+        debugger;
+        var mainImageElement = document.getElementById('mainImage');
+
+        
+        mainImageElement.currentSrc = '';
+
+       
+        mainImageElement.src = imageUrl;
+    }
+
+
+    function addToCart() {
+        var quantity = quantityInput.value;
+        alert('Added ' + quantity + ' item(s) to the cart');
+     
+    }
+</script>

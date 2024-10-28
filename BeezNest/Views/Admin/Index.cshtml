@@ -1,0 +1,79 @@
+﻿@model IEnumerable<Core.Models.Dropdown>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+ }
+
+
+    <div class="container p-3 mt-5">
+        <div class="row pt-4">
+            <div class="col-6">
+                <h2 class="text-primary">Dropdown List</h2>
+            </div>
+            <div class="col-6 text-end">
+                <a asp-controller="Admin" asp-action="CreateDropdown" class="btn btn-primary">
+                    <i class="fa-solid fa-plus"></i> &nbsp; Create New Dropdown
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <br />
+    <br />
+
+    @if (Model.Count() > 0)
+    {
+        <table id="myTable" class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Key</th>
+                    <th>Name</th>
+                    <th>Date</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var data in Model)
+                {
+                    <tr>
+                        <td width="50%">@data.Key</td>
+                        <td width="30%">@data.DropdownName</td>
+                        <td width="30%">@data.DateCreated</td>
+                        <td class="text-center">
+                            <div class="w-75 btn-group" role="group">
+                                <a asp-controller="Admin" asp-route-id="@data.Id" asp-action="EditDropdown" class="btn btn-primary mx-2">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a asp-controller="Admin" asp-route-id="@data.Id" asp-action="DeleteDropdown" class="btn btn-danger mx-2">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Dropdown Exists</p>
+    }
+
+<link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet" />
+
+@section script{
+    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable({
+                "paging": true,
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "searching": true,
+                "ordering": true,
+                "info": true
+            });
+        });
+    </script>
+
+}

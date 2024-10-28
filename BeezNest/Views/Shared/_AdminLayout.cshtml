@@ -1,0 +1,157 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - BeezNest</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+
+
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow fixed-top">
+            <div class="container-fluid">
+                <button class="btn" type="button" onclick="showSidebar()">
+                    <span><i class="fa-solid fa-bars"></i></span>
+                </button>
+                <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">BeezNest</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="Index">Dropdowns</a>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+        </nav>
+    </header>
+
+    <div class="sidebar">
+        <div class="offcanvas-static" id="toggleablesidebar">
+            <div class="offcanvas-header">
+                <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fa-solid fa-house me-3"></i>Home</a>
+            </div>
+            <div class="offcanvas-body">
+
+                <a asp-area="" asp-controller="Home" asp-action="Privacy"><i class="fa-solid fa-lock me-3"></i>Privacy</a>
+                <a href="#contact"><i class="fa-solid fa-address-book me-3"></i>Contact</a>
+                <a href="#about"> <i class="fa-solid fa-address-card me-3"></i>About</a>
+                <a asp-area="" asp-controller="Admin" asp-action="Index"><i class="fa-solid fa-droplet me-3"></i>Dropdowns</a>
+                <a asp-area="" asp-controller="Admin" asp-action="CreateProduct"><i class="fa-brands fa-product-hunt me-3"></i>Create Products</a>
+                <a asp-area="" asp-controller="Admin" asp-action="UploadedProducts"><i class="fa-brands fa-product-hunt me-3"></i>Uploaded Products</a>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="container">
+        <main role="main" class="pb-3" style="min-height:550px; background-color:#F6F6F6;">
+            <div class="page-wrapper">
+                @RenderBody()
+            </div>
+            
+        </main>
+    </div>
+
+    <!--Footer-->
+    <div class="page-wrapper">
+        <footer class="footer-3" style="position: absolute">
+            <div class="site-footer">
+                <div class="container-fluid" style="background-color: #0196E7">
+                    <!--Footer Links-->
+                    <div class="footer-top">
+                        <div class="row" style="color:white">
+                            <div class="col-8 col-sm-12 col-md-3 col-lg-3 contact-box">
+                                <h5>ABOUT US</h5>
+                                <ul class="addressFooter">
+                                    <li><p>Beeznest is poised as the leading platform 
+                                        for Gadgets and accessories in 
+                                        Nigeria which gives a seameless 
+                                        transactional experiences and unbeatable 
+                                        friendly cost 
+                                    </p> </li>                                   
+                                </ul>
+                            </div>
+                            <div class="col-8 col-sm-12 col-md-3 col-lg-3">
+                                <h5>Quick Shop</h5>
+                                <ul>
+                                    <li><a href="#">Buy</a></li>
+                                    <li><a href="#">Sell</a></li>
+                                    <li><a href="#">Repair</a></li>
+                                    <li><a href="#">Swap</a></li>
+                                    <li><a href="#">Others</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-8 col-sm-12 col-md-3 col-lg-3">
+                                <h4 class="h4">Informations</h4>
+                                <ul>
+                                    <li><a href="#">About us</a></li>
+                                    <li><a href="#">Careers</a></li>
+                                    <li><a href="#">Privacy policy</a></li>
+                                    <li><a href="#">Terms &amp; condition</a></li>
+                                    <li><a href="#">My Account</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-8 col-sm-12 col-md-3 col-lg-3">
+                                <h4 class="h4">Customer Services</h4>
+                                <ul>
+                                    <li><a href="#">Request Personal Data</a></li>
+                                    <li><a href="#">FAQ's</a></li>
+                                    <li><a href="#">Contact Us</a></li>
+                                    <li><a href="#">Orders and Returns</a></li>
+                                    <li><a href="#">Support Center</a></li>
+                                </ul>
+                            </div>
+                            <div class="col-8 col-sm-12 col-md-3 col-lg-3">
+                                <div class="display-table">
+                                    <div class="display-table-cell footer-newsletter">
+                                        <form action="#" method="post">
+                                            <label class="h4">Newsletter</label>
+                                            <p>Be the first to hear about new mobile and get to see products that are on promo..</p>
+                                            <div class="input-group">
+                                                <input type="email" class="input-group__field newsletter__input" name="EMAIL" value="" placeholder="Email address" required="">
+                                                <span class="input-group__btn">
+                                                    <button type="submit" class="btn newsletter__submit" name="commit" id="Subscribe"><span class="newsletter__submit-text--large">Subscribe</span></button>
+                                                </span>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!--End Footer-->
+
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @RenderSection("script", required: false)
+</body>
+</html>

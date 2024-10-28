@@ -1,0 +1,46 @@
+﻿@model Core.Models.Dropdown
+
+<form method="post" asp-action="DeletePost">
+    <input asp-for="Id" hidden />
+    <div class="border p-3">
+        <div class="form-group row">
+            <h2 class="text-info pl-3">Delete Dropdowns</h2>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Key"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Key" disabled class="form-control w-100" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="DropdownName"></label>
+
+                    </div>
+                    <div class="col-8 pt-2">
+                        <input asp-for="DropdownName" disabled class="form-control w-100" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+                        <div class="col pt-3">
+                            <input type="submit" class="btn btn-danger w-100" value="Delete" />
+                        </div>
+                        <div class="col pt-3">
+                            <a asp-action="Index" class="btn btn-success w-100">
+                                <i class="fa-solid fa-right-from-bracket"></i>  Back
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    @*Keep this empty*@
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

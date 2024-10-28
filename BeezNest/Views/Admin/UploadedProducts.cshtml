@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Core.ViewModels.UploadProductViewModel>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">All Products</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Admin" asp-action="CreateProduct" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> &nbsp; Add New Products
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <p>No products uploaded yet.</p>
+}
+else
+{
+    <table id="Productstable" class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Product Model</th>
+                <th>Price</th>
+                <th>Specifications</th>
+                <th>Product Images</th> 
+                <th>Number of Items</th>
+                <th>Date Sampled</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in Model)
+            {
+                <tr>
+                    <td>@product.ProductsModel</td>
+                    <td>@(product.Price.HasValue ? product.Price.Value.ToString("N2") : "#0.00")</td>
+                    <td>@product.Specifications</td>
+                    @if (string.IsNullOrEmpty(product.UploadedImage))
+                    {
+                        <td></td>
+                    }else{
+                        <td>
+                            <img src="@product.UploadedImage" width="100" style="margin-right: 5px;" />
+                        </td>
+                    }
+                    <td>@product.NumberOfItem</td>
+                    <td>@product.DateSampled?.ToString("dd-MMM-yyyy")</td>
+                    <td>
+                        <div class="w-75 btn-group" role="group">
+                            <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="EditProduct" class="btn btn-primary mx-2">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="DeleteProduct" class="btn btn-danger mx-2">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet" />
+
+@section script {
+    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Productstable').DataTable({
+                "paging": true,
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "searching": true,
+                "ordering": true,
+                "info": true
+            });
+        });
+    </script>
+
+}
+
