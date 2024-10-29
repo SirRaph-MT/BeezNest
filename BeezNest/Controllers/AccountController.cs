@@ -19,11 +19,13 @@ namespace BeezNest.Controllers
         private readonly IAdminHelper _adminHelper;
         public AccountController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IUserHelper userHelper, IAdminHelper adminHelper)
         {
+            // tested comitting
             _userManager = userManager;
             _signInManager = signInManager;
             _userHelper = userHelper;
             _context = context;
             _adminHelper = adminHelper;
+
         }
 
         public IActionResult Registration()
