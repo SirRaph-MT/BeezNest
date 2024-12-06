@@ -1,22 +1,22 @@
 ﻿@model IEnumerable<Core.Models.UploadProduct>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewData["Title"] = "Search Products";
 }
 
-<style>
-    .background {
-        background-image: url('../images/logo.jpg');
-    }
-</style>
+<h2 class="text-center">Search Results</h2>
 
-
-<div class="container background">
-    <div class="row">
+@if (!Model.Any())
+{
+    <p>No products found.</p>
+}
+else
+{
+    <div class="row mt-5">
         @foreach (var product in Model)
         {
-            <div class="col-md-2 mb-4">
+            <div class="col-md-2 mb-4 mt-5">
                 <a asp-controller="Home" asp-route-productId="@product.Id" asp-action="ProductDetails" class="card h-100 position-relative text-decoration-none" style="color: inherit;">
 
                     <img src="@product.ProductImages?.FirstOrDefault()?.ImageUrl" class="card-img-top" alt="@product.ProductsModel" style="height: 200px; object-fit: cover;" />
@@ -29,7 +29,7 @@
                             <strong>Price: </strong>₦@product.Price?.ToString("N2")
                         </p>
                         <p class="card-text" style="font-size: 0.9rem; margin-bottom: 0;">
-                            <strong>Item left: </strong>@product.NumberOfItem
+                            <strong>Number of Items: </strong>@product.NumberOfItem
                         </p>
                     </div>
                     <span class="stretched-link"></span>
@@ -37,27 +37,4 @@
             </div>
         }
     </div>
-</div>
-<section class="mt-5">
-
-    <button type="button" class="btn btn-info text-center" data-bs-toggle="collapse" data-bs-target="#drop">Learn More About Wholesale/Bulk Buying</button>
-
-    <div class="container">
-        <div id="drop" class="collapse">
-            <div class="row">
-                <div class="col-md pt-3">
-                    <p>To be able to access the wholesale deals, you must be a registered user <br> Contact us via our email address .</p>
-                </div>
-
-                <div class="col">
-                    <p>
-                     
-                    </p>
-
-                    <button class="btn btn-info btn-lg" data-bs-toggle="modal" data-bs-target="#enrollModal">Start Enrollment</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-</section>
+}

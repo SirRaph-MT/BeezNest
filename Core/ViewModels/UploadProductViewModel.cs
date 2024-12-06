@@ -23,7 +23,9 @@ namespace Core.ViewModels
         public string? Colors { get; set; }
         public List<IFormFile> ProductImages { get; set; }
         public string? UploadedImage { get; set; }
-   
+
+        public string? ImageUrl { get; set; }
+
     }
 
 

@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,9 +6,9 @@
     <title>@ViewData["Title"] - BeezNest</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">k rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<link href="~/css/sweetalert2.css" rel="stylesheet" />
+     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="~/css/sweetalert2.css" rel="stylesheet" />
     <style>
         .footer-3 ul {
             list-style: none;
@@ -32,13 +31,13 @@
             height: 55px;
         }
 
-       
+
 
         .SearchForm {
             position: fixed;
-            top: 60px;
+            top: 60px; 
             width: 75%;
-            z-index: 9999;
+            z-index: 9999; 
             background-color: #fff;
             margin-left: 200px;
         }
@@ -64,7 +63,7 @@
             font-weight: bolder;
         }
 
-        #checkoutContainer {
+        #checkoutContainer{
             background-color: #0196E7 !important;
         }
 
@@ -170,15 +169,16 @@
     </script>
 
 
+     
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow fixed-top">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow mb-3 fixed-top">
             <div class="container-fluid">
-                <button class="btn" type="button" data-bs-toggle="offcanvas" data-bs-target="#toggleablesidebar">
-                    <span><i class="fa-solid fa-bars text-white"></i></span>
+                <button class="btn text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
+                    <span><i class="fa-solid fa-bars"></i></span>
                 </button>
-                <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">BeezNest</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BeezNest</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -188,30 +188,23 @@
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="UploadedProducts">Admin Page</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="Index">Products</a>
                         </li>
                     </ul>
                 </div>
-                <button type="button" class="btn iconShopping" data-bs-toggle="modal" data-bs-target="#cartModal">
-                    <i class="fa-solid fa-cart-shopping"></i><span class="cartCounterBadge"></span>
+                <button type="button" class="btn iconShopping" data-bs-toggle="modal" data-bs-target="#myModal">
+                    <i  class="fa-solid fa-cart-shopping"></i><span class="cartCounterBadge"></span>
                 </button>
-                <div class="nav-item account">
-                    <a class="nav-link text-white" asp-area="" asp-controller="Payment" asp-action="PaymentHistory">Order History</a>
-                </div>
 
                 <div class="ms-5">
                     <ul class="navbar-nav">
 
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li>
-                                Welcome @User.Identity.Name
-                                @* Welcome @User.Claims.FirstOrDefault(c => c.Type == "FirstName")?.Value *@
-
-                            </li>
-
                             <li class="nav-item account">
                                 <a class="nav-link text-white" asp-controller="Account" asp-action="LogOut">LogOut</a>
                             </li>
@@ -231,161 +224,127 @@
                 </div>
             </div>
         </nav>
+
+        <!-- The Modal -->
+        <div class="modal" id="myModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title text-center">Cart</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Image</th>
+                                    <th>Product</th>
+                                    <th>specification</th>
+                                    <th>Price</th>
+                                    <th>Quantity</th>
+                                    <th>Sub-total </th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="cartTableBody">
+                               
+                            </tbody>
+
+                        </table>
+                        <div id="checkoutContainer" class="mt-3 text-center"></div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                        
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- The Modal -->
+        <div class="modal" id="checkoutModal">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+
+                    <!-- Modal Header -->
+                    <div class="modal-header">
+                        <h4 class="modal-title">Order Summary</h4>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+
+                    <!-- Modal body -->
+                    <div class="modal-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Total number of orders</th>
+                                    <th>Total price of orders</th>
+                                    <th>Haulage Fee</th>
+                                    <th>Grand Total Fee</th>
+                                </tr>
+                            </thead>
+                            <tbody id="checkoutTableBody">
+
+                            </tbody>
+                        </table>
+                        <div class="mt-3 text-center">
+                            <label>Select Payment type</label>
+                            <select class="form-control">
+                                <option>Transfer</option>                   
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Modal footer -->
+                    <div class="modal-footer">
+                        <a class="btn btn-dark text-center" asp-controller="Payment" asp-action="Index">Pay Now </a>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <form class="input-group new-input SearchForm" method="post" asp-controller="Home" asp-action="Search">
+            <input name="searchString" type="text" class="form-control h3" placeholder="Search for a product here..." />
+            <button type="submit" class="btn btn-outline-dark" aria-label="Search">
+                <i class="fa-solid fa-magnifying-glass"></i>Search
+            </button>
+        </form>
+
+
+        <div class="sidebar">
+            <div class="offcanvas offcanvas-start" id="demo">
+                <div class="offcanvas-header">
+
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <a class="active" href="#home">Home</a>
+                    <a href="#news">News</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#about">About</a>
+                </div>
+            </div>
+
+        </div>
     </header>
-
-
-    <!-- The Modal -->
-    <div class="modal" id="cartModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title text-center">Cart</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Image</th>
-                                <th>Product</th>
-                                <th>specification</th>
-                                <th>Price</th>
-                                <th>Quantity</th>
-                                <th>Total </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody id="cartTableBody">
-                        </tbody>
-
-                    </table>
-                    <div id="checkoutContainer" class="mt-3 text-center"></div>
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <a type="button"class="btn-success" asp-area="" asp-controller="Home" asp-action="Index">Continue Shopping</a>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-
-<!-- The Modal -->
-<div class="modal" id="checkoutModal">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-
-            <!-- Modal Header -->
-            <div class="modal-header">
-                <h4 class="modal-title">Order Summary</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <!-- Modal body -->
-            <div class="modal-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Product Name</th>
-                            <th>Specifications</th>
-                            <th>Unit Price</th>
-                            <th>Quantity</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody id="checkoutTableBody">
-                        <!-- Rows will be dynamically inserted here -->
-                    </tbody>
-                </table>
-                <div class="mt-3">
-                    <div class="d-flex justify-content-between">
-                        <label>Haulage Fee:</label>
-                        <input id="haulageFee" class="form-control w-50" type="text" readonly />
-                    </div>
-                    <div class="d-flex justify-content-between mt-2">
-                        <label>Grand Total:</label>
-                        <input id="grandTotal" class="form-control w-50" type="text" readonly />
-                    </div>
-                </div>
-                <div class="mt-3 text-center">
-                    <label>Select Payment Type:</label>
-                    <select class="form-control">
-                        <option>Transfer</option>
-                        <option>Cash</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Modal footer -->
-            <div class="modal-footer">
-                <a class="btn btn-dark text-center" asp-controller="Payment" asp-action="Index">Pay Now</a>
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            </div>
-
-        </div>
-    </div>
-</div>
-
-
-
-    <form class="input-group new-input SearchForm" method="post" asp-controller="Home" asp-action="Search">
-        <input name="searchString" type="text" class="form-control h3" placeholder="Search for a product here..." />
-        <button type="submit" class="btn btn-outline-dark" aria-label="Search">
-            <i class="fa-solid fa-magnifying-glass"></i>Search
-        </button>
-    </form>
-
-
-    <!-- Carousel -->
-    <div id="demo" class="carousel slide" data-bs-ride="carousel" style="margin: 0;">
-        <!-- Additional carousel styling here if needed -->
-        <!-- Indicators/dots -->
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#demo" data-bs-slide-to="0" class="active"></button>
-            <button type="button" data-bs-target="#demo" data-bs-slide-to="1"></button>
-            <button type="button" data-bs-target="#demo" data-bs-slide-to="2"></button>
-            <button type="button" data-bs-target="#demo" data-bs-slide-to="3"></button>
-        </div>
-
-        <!-- The slideshow/carousel -->
-        <div class="carousel-inner">
-            <div class="carousel-item active">
-                <img src="~/Images/Chupez charger.jpg" alt="Chupez Charger" class="d-block w-100" style="height:700px; width:100%" />
-            </div>
-            <div class="carousel-item">
-                <img src="~/Images/chupez flash.jpg" alt="Chupez Flash" class="d-block w-100" style="height:700px; width:100%" />
-            </div>
-            <div class="carousel-item">
-                <img src="~/Images/chupez power bank.jpg" alt="Chupez Power Bank" class="d-block w-100" style="height:700px; width:100%" />
-            </div>
-            <div class="carousel-item">
-                <img src="~/Images/1 (2).jpg" alt="Neck bank" class="d-block w-100" style="height:700px; width:100%" />
-            </div>
-        </div>
-
-        <!-- Left and right controls/icons -->
-        <button style="color: #C67600;" class="carousel-control-prev" type="button" data-bs-target="#demo" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon"></span>
-        </button>
-        <button style="color: #C67600;" class="carousel-control-next" type="button" data-bs-target="#demo" data-bs-slide="next">
-            <span class="carousel-control-next-icon"></span>
-        </button>
-    </div>
 
     <div id="UserEmail" style="display:none;">
         @User?.Identity.Name
     </div>
-
-    <div class="container">
-        <main role="main" class="pb-3" style="min-height:550px;  margin-top: 40px; background-color:#F6F6F6">
+    
+    <div class="container" >
+        <main role="main" class="pb-3" style="min-height:550px;">
             @RenderBody()
         </main>
     </div>
@@ -455,11 +414,6 @@
             </div>
         </div>
     </footer>
-
-
-
-
-
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

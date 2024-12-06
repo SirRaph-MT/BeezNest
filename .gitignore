@@ -361,3 +361,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/BeezNest/wwwroot/StockPhotos
+/BeezNest/wwwroot/uploads

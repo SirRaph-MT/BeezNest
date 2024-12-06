@@ -1,11 +1,11 @@
-﻿@model Core.ViewModels.ApplicationUserViewModel;
-
+﻿ @model Core.ViewModels.ApplicationUserViewModel;
 @{
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
-   ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register";
 }
+
 <style>
-    body, html 
+    body, html
     {
         height: 100%;
     }
@@ -15,12 +15,10 @@
         justify-content: center;
         align-items: center;
         height: 100%;
-       
-    }
-     .card-body{
-        margin-top: 70px;
     }
 </style>
+
+<h1 class="text-center">Register as an Admin</h1>
 
 <div class="centered-card my-5">
     <div class="card" style="width: 40rem;">
@@ -28,7 +26,7 @@
             <h5 class="card-title text-center">Sign Up</h5>
             <div>
                 <div class="">
-                    <input id="role" type="hidden" value="User" />
+                    <input id="role" type="hidden" value="Admin" />
                     <div class="row">
                         <div class="mb-3 mt-3 col">
                             <label>First Name:</label>
@@ -36,14 +34,14 @@
                         </div>
                         <div class="mb-3 mt-3 col">
                             <label>Last Name:</label>
-                            <input type="text" class="form-control w-100" id="lastName" placeholder="Lastname" >
+                            <input type="text" class="form-control w-100" id="lastName" placeholder="Lastname">
                         </div>
                         <div class="mb-3 mt-3 col">
                             <label>Phone:</label>
                             <input type="number" class="form-control w-100" id="phoneNumber" placeholder="Enter Phone Number">
                             <small class="form-text text-muted">Enter a valid phone .</small>
                         </div>
-                       
+
                     </div>
                     <div class="row">
                         <div class="mb-3 mt-3 col">
@@ -67,7 +65,7 @@
                     <div class="row">
                         <div class="mb-3 mt-3 col">
                             <label>Email:</label>
-                            <input type="email" class="form-control w-100" id="email" placeholder="Enter email" >
+                            <input type="email" class="form-control w-100" id="email" placeholder="Enter email">
                         </div>
                         <div class="mb-3 mt-3 col">
                             <label>Password:</label>
@@ -78,16 +76,16 @@
                             <label>Confirm Password:</label>
                             <input type="password" class="form-control w-100" id="confirmPassword" placeholder="Confirm password">
                         </div>
-                       
+
                     </div>
-                    
-                    
-                    
+
+
+
                     <div class="mx-auto">
                         <button type="submit" class="btn btn-secondary w-25" onclick="registration()">Submit</button>
                     </div>
-                    </div>
-                
+                </div>
+
             </div>
             <small class="text-center"> already have an account? <a asp-controller="Account" asp-action="Login">Login</a></small>
 
@@ -95,33 +93,82 @@
         </div>
     </div>
 </div>
+@* 
+<div class="centered-card">
+    <div class="card" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title text-center">Sign Up</h5>
+            <form>
+                <input id="role" type="hidden" value="Admin" />
+                <div class="mb-3 mt-3">
+                    <label for="Firstname">Firstname:</label>
+                    <input type="text" class="form-control w-100" id="firstName" placeholder="Firstname" name="Firstname">
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="Lastname">Lastname:</label>
+                    <input type="text" class="form-control w-100" id="lastName" placeholder="Lastname" name="Lastname">
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="Phone">Phone:</label>
+                    <input type="text" class="form-control w-100" id="phoneNumber" placeholder="Enter Phone Number" name="Phone">
+                </div>
+
+                <div class="mb-3 mt-3">
+                    <label for="Address">Address:</label>
+                    <input type="text" class="form-control w-100" id="address" placeholder="Enter Address" name="Address">
+                </div>
+                <div class="mb-3 mt-3">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control w-100" id="email" placeholder="Enter email" name="email">
+                </div>
+                <div class="mb-3">
+                    <label for="pwd">Password:</label>
+                    <input type="password" class="form-control w-100" id="password" placeholder="Enter password" name="pswd">
+                </div>
+                <div class="mb-3">
+                    <label for="confirmpwd">Comfirm Password:</label>
+                    <input type="password" class="form-control w-100" id="confirmPassword" placeholder="Confirm password" name="pswd">
+                </div>
+                <div class="form-check mb-3">
+                    <label class="form-check-label">
+                        <input class="form-check-input" type="checkbox" name="remember"> Remind me
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-secondary w-100" onclick="registration()">Submit</button>
+            </form>
+        </div>
+    </div>
+</div>
+ *@
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const stateDropdown = document.getElementById("state");
         const cityDropdown = document.getElementById("city");
 
-  
-        fetch('/Admin/GetStates') 
-       
+
+        fetch('/Admin/GetStates')
+
             .then(response => response.json())
             .then(states => {
                 states.forEach(state => {
                     const option = document.createElement("option");
-                    option.value = state.dropdownName; 
-                    option.textContent = state.dropdownName; 
+                    option.value = state.dropdownName;
+                    option.textContent = state.dropdownName;
                     stateDropdown.appendChild(option);
                 });
             });
 
-     
-        fetch('/Admin/GetCities') 
+
+        fetch('/Admin/GetCities')
             .then(response => response.json())
             .then(cities => {
                 cities.forEach(city => {
                     const option = document.createElement("option");
-                    option.value = city.dropdownName; 
-                    option.textContent = city.dropdownName; 
+                    option.value = city.dropdownName;
+                    option.textContent = city.dropdownName;
                     cityDropdown.appendChild(option);
                 });
             });

@@ -12,5 +12,7 @@ namespace Logic.IHelper
     {
         Task<ApplicationUser> CreateUserByAsync(ApplicationUserViewModel applicationUserViewModel);
 
+        ApplicationUser FindUserByEmail(string email);
+
     }
 }

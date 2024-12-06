@@ -21,5 +21,8 @@ namespace Core.Db
         public DbSet<UploadProduct> UploadProducts { get; set; }
 
         public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Payments> Payments { get; set; }
+
     }
 }

@@ -1,0 +1,107 @@
+﻿@model IEnumerable<Core.Models.PaymentsViewModel>
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+    ViewData["Title"] = "PaymentHistory";
+}
+
+<style>
+    .tableCenter {
+        margin-top: 150px;
+    }
+    table.table td h2.table-avatar {
+        align-items: center;
+        display: inline-flex;
+        font-size: inherit;
+        font-weight: 400;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+        table.table td h2.table-avatar.blue-link a {
+            color: #007bff;
+        }
+
+    table.table td h2 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+        table.table td h2 a:hover {
+            color: #366092;
+        }
+
+    table.table td h2 span {
+        color: #888;
+        display: block;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+</style>
+
+@if (!Model.Any())
+{
+    <p> You have made no order.</p>
+}
+else
+{
+    <table class="table table-bordered tableCenter">
+        <thead>
+            <tr>
+       
+                <th>Order Date</th>
+                <th>Ordered Item/s</th>            
+                <th>Amount Paid</th>                         
+                <th>Order Status</th>                         
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                          
+                    <td>@order.PaymentDate</td>              
+                    <td>
+                        @foreach (var stock in order.Stocks)
+                        {
+                            <h2 class="table-avatar">
+                                <a href="">
+                                    @stock.Name
+                                    <span> spec:@stock.Specifications</span>
+                                    <span> Qty:@stock.Quantity</span>
+                                    <span> Price:@stock.UnitPrice</span>
+                                    <span> Total:@stock.Total</span>
+                                </a>
+                            </h2>
+                        }
+                    </td>
+                    <td>₦@order.GrandTotal</td>
+                    <td>
+                        @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
+                        {
+                            <div class="w-75 btn-group" role="group">
+                                 
+                                <span class="badge bg-secondary mx-2"> Check back for Confirmation</span>
+                            </div>
+                        }
+                        else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
+                        {
+                            <span class="badge bg-success mx-2">Confirmed and Shipped</span>
+                  
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger mx-2">Declined</span>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

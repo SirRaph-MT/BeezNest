@@ -8,7 +8,105 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="~/css/sweetalert2.css" rel="stylesheet" />
+    <script>
+        function errorAlert(message) {
+            Swal.fire({
+                icon: 'error',
+                text: message,
+                timer: 60000,
+                confirmButtonColor: "#366092",
+            })
+        }
 
+        function infoAlert(message) {
+            Swal.fire({
+                icon: 'info',
+                text: message,
+                timer: 30000,
+                confirmButtonColor: "#366092",
+            })
+        }
+
+        function infoAlertWithStyles(message) {
+            Swal.fire({
+                title: 'Incomplete Payment',
+                icon: 'info',
+                text: message,
+                confirmButtonColor: "#366092",
+            })
+        }
+        function newInfoAlert(message, url) {
+            Swal.fire({
+                icon: 'info',
+                text: message,
+                timer: 30000,
+                confirmButtonColor: "#366092",
+            }).then((isConfirm) => {
+                if (isConfirm) {
+                    location.href = url;
+                }
+            })
+        }
+        function successAlert(message) {
+            Swal.fire({
+                icon: 'success',
+                text: message,
+                timer: 30000,
+                confirmButtonColor: "#366092",
+            })
+        }
+
+        function newErrorAlert(message, url) {
+            Swal.fire({
+                icon: 'error',
+                text: message,
+                timer: 30000,
+                confirmButtonColor: "#366092",
+            }).then(function () {
+                location.href = url;
+            })
+        }
+
+        function newSuccessAlert(message, url) {
+            Swal.fire({
+                icon: 'success',
+                text: message,
+                confirmButtonColor: "#366092",
+            }).then((isConfirm) => {
+                if (isConfirm) {
+                    location.reload(url);
+                }
+            })
+
+        }
+        function successAlertWithRedirect(message, url) {
+            Swal.fire({
+                title: "Success",
+                text: message,
+                icon: "success",
+                timer: 30000,
+                overlay: "background - color: rgba(43, 165, 137, 0.45)",
+                confirmButtonColor: "#366092",
+            }).then(function () {
+
+                location.href = url;
+            })
+        }
+
+        function successAlertWithFunction(message, action) {
+            Swal.fire({
+                title: "Success",
+                text: message,
+                icon: "success",
+                timer: 30000,
+                overlay: "background - color: rgba(43, 165, 137, 0.45)",
+                confirmButtonColor: "#366092",
+            }).then(function () {
+                action;
+            })
+        }
+    </script>
 
 
 </head>
@@ -33,10 +131,38 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="Index">Dropdowns</a>
+                            <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="Index"></a>
                         </li>
-
                     </ul>
+
+                    <div class="ms-5">
+                        <ul class="navbar-nav">
+
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <li>
+                                    Welcome @User.Identity.Name
+                                    @* Welcome @User.Claims.FirstOrDefault(c => c.Type == "FirstName")?.Value *@
+
+                                </li>
+
+                                <li class="nav-item account">
+                                    <a class="nav-link text-white" asp-controller="Account" asp-action="LogOut">LogOut</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item account">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                                </li>
+
+                                <li class="nav-item account">
+                                    <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="registration">Register</a>
+                                </li>
+                            }
+
+                        </ul>
+                    </div>
                 </div>
 
             </div>
@@ -56,6 +182,13 @@
                 <a asp-area="" asp-controller="Admin" asp-action="Index"><i class="fa-solid fa-droplet me-3"></i>Dropdowns</a>
                 <a asp-area="" asp-controller="Admin" asp-action="CreateProduct"><i class="fa-brands fa-product-hunt me-3"></i>Create Products</a>
                 <a asp-area="" asp-controller="Admin" asp-action="UploadedProducts"><i class="fa-brands fa-product-hunt me-3"></i>Uploaded Products</a>
+              @*   <a asp-area="" asp-controller="Orders" asp-action="ClientOrders">Orders</a> *@
+
+                <a asp-area="" asp-controller="Orders" asp-action="ClientOrders" class="position-relative">
+                    Orders
+                    <span id="orderCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle">0</span>
+                </a>
+
             </div>
         </div>
     </div>
@@ -68,7 +201,7 @@
             <div class="page-wrapper">
                 @RenderBody()
             </div>
-            
+
         </main>
     </div>
 
@@ -83,12 +216,15 @@
                             <div class="col-8 col-sm-12 col-md-3 col-lg-3 contact-box">
                                 <h5>ABOUT US</h5>
                                 <ul class="addressFooter">
-                                    <li><p>Beeznest is poised as the leading platform 
-                                        for Gadgets and accessories in 
-                                        Nigeria which gives a seameless 
-                                        transactional experiences and unbeatable 
-                                        friendly cost 
-                                    </p> </li>                                   
+                                    <li>
+                                        <p>
+                                            Beeznest is poised as the leading platform
+                                            for Gadgets and accessories in
+                                            Nigeria which gives a seameless
+                                            transactional experiences and unbeatable
+                                            friendly cost
+                                        </p>
+                                    </li>
                                 </ul>
                             </div>
                             <div class="col-8 col-sm-12 col-md-3 col-lg-3">
@@ -151,7 +287,9 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/sweetalert2.all.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
     @RenderSection("script", required: false)
+
 </body>
 </html>

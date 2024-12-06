@@ -1,5 +1,4 @@
 ﻿@model IEnumerable<Core.ViewModels.UploadProductViewModel>
-
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -40,15 +39,17 @@ else
             {
                 <tr>
                     <td>@product.ProductsModel</td>
-                    <td>@(product.Price.HasValue ? product.Price.Value.ToString("N2") : "#0.00")</td>
+                    <td>₦@(product.Price.HasValue ? product.Price.Value.ToString("N2") : "#0.00")</td>
                     <td>@product.Specifications</td>
                     @if (string.IsNullOrEmpty(product.UploadedImage))
                     {
                         <td></td>
-                    }else{
+                    }else{                    
                         <td>
-                            <img src="@product.UploadedImage" width="100" style="margin-right: 5px;" />
-                        </td>
+                            <a asp-controller="Admin" asp-action="UploadedImages" asp-route-productId="@product.Id" style="color: inherit;">
+                                <img src="@product.UploadedImage" width="100" style="margin-right: 5px;" />
+                            </a>
+                        </td>                    
                     }
                     <td>@product.NumberOfItem</td>
                     <td>@product.DateSampled?.ToString("dd-MMM-yyyy")</td>

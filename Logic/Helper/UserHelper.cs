@@ -18,53 +18,59 @@ namespace Logic.Helper
             _userManager = userManager;
 
         }
-      
 
         public async Task<ApplicationUser> CreateUserByAsync(ApplicationUserViewModel applicationUserViewModel)
         {
             try
             {
-                if (applicationUserViewModel != null)
+                if (applicationUserViewModel == null)
                 {
-                    var user = new ApplicationUser()
-                    {
-                        FirstName = applicationUserViewModel.FirstName,
-                        LastName = applicationUserViewModel.LastName,
-                        DateCreated = DateTime.Now,
-                        PhoneNumber = applicationUserViewModel.PhoneNumber,
-                        UserName = applicationUserViewModel.Email,
-                        Email = applicationUserViewModel.Email,
-                        Address = applicationUserViewModel.Address,
-                    };
-                    var result = await _userManager.CreateAsync(user, applicationUserViewModel.Password);
-                    if (result.Succeeded)
-                    {
-                        var userRoles = await _userManager.GetRolesAsync(user);
-                        if (!userRoles.Contains("User"))
-                        {
-                            var roleResult = await _userManager.AddToRoleAsync(user, "User");
-                            if (!roleResult.Succeeded)
-                            {
-                                var roleErrors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
-                                throw new Exception($"Role assignment failed: {roleErrors}");
-                            }
-                        }
-                        await _userManager.AddToRoleAsync(user, applicationUserViewModel.Role);
-                        return user;
-                    }
-                    return user;
-
+                    throw new ArgumentNullException(nameof(applicationUserViewModel), "User data is required.");
                 }
+
+            
+                var user = new ApplicationUser
+                {
+                    FirstName = applicationUserViewModel.FirstName,
+                    LastName = applicationUserViewModel.LastName,
+                    DateCreated = DateTime.Now,
+                    PhoneNumber = applicationUserViewModel.PhoneNumber,
+                    UserName = applicationUserViewModel.Email,                  
+                    Email = applicationUserViewModel.Email,                  
+                    Address = applicationUserViewModel.Address,
+                    Role = applicationUserViewModel.Role,
+                };
+
+               
+                var result = await _userManager.CreateAsync(user, applicationUserViewModel.Password).ConfigureAwait(false);
+                if (result.Succeeded)
+                {
+                   await _userManager.AddToRoleAsync(user, applicationUserViewModel.Role).ConfigureAwait(false);
+                    return user;
+                 
+                }
+
+
                 return null;
             }
-            catch (Exception myException)
+            catch (Exception ex)
             {
-
-                throw myException;
+              
+                throw new Exception($"An error occurred during user creation: {ex.Message}", ex);
             }
-
-         
         }
+
+
+
+        public ApplicationUser FindUserByEmail(string email)
+        {
+            var user = _userManager.Users.Where(x => x.Email == email).FirstOrDefault();
+            return user;
+        }
+
+
+
+   
 
     }
 }

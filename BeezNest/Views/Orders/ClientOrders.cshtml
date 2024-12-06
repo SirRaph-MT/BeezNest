@@ -1,0 +1,118 @@
+﻿@model IEnumerable<Core.Models.PaymentsViewModel>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<style>
+    table.table td h2.table-avatar {
+        align-items: center;
+        display: inline-flex;
+        font-size: inherit;
+        font-weight: 400;
+        margin: 0;
+        padding: 0;
+        vertical-align: middle;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+        table.table td h2.table-avatar.blue-link a {
+            color: #007bff;
+        }
+
+    table.table td h2 a {
+        color: #333;
+        text-decoration: none;
+    }
+
+        table.table td h2 a:hover {
+            color: #366092;
+        }
+
+    table.table td h2 span {
+        color: #888;
+        display: block;
+        font-size: 12px;
+        margin-top: 3px;
+    }
+
+</style>
+@if (!Model.Any())
+{
+    <p> You have made no order.</p>
+}
+else
+{
+    <table class="table table-bordered tableCenter">
+        <thead>
+            <tr>
+                <th>s/n</th>
+                <th>Order Date</th>
+                <th>Amount Paid</th>
+                <th>Proof of payment</th>
+                <th>Customers Name</th>
+                <th>product Ordered</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@order.PaymentDate</td>
+                    <td>₦@order.GrandTotal</td>
+                    <td>
+                        @if (!string.IsNullOrEmpty(order.ProofOfPaymentPath))
+                        {
+                            <img src="@order.ProofOfPaymentPath" alt="Proof of Payment" style="width: 100px; height: auto;" />
+                        }
+                        else
+                        {
+                            <p>No proof uploaded</p>
+                        }
+                    </td>
+
+                    <td>@order.User</td>
+                    <td>
+                        @foreach (var stock in order.Stocks)
+                        {
+                            <h2 class="table-avatar">
+                                <a href="">
+                                    @stock.Name
+                                    <span> spec:@stock.Specifications</span>
+                                    <span> Qty:@stock.Quantity</span>
+                                    <span> Price:@stock.UnitPrice</span>
+                                    <span> Total:@stock.Total</span>
+                                </a>
+                            </h2>
+
+                        }
+                    </td>
+                    <td>
+                        @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
+                        {
+                            <div class="w-75 btn-group" role="group">
+                                <a asp-controller="Payment" asp-route-id="@order.Id" asp-action="ConfirmOrderPayment" class="btn btn-success mx-2">
+                                    Confirm
+                                </a>
+                                <a asp-controller="Payment" asp-route-id="@order.Id" asp-action="DeclineOrderPayment" class="btn btn-danger mx-2">
+                                    Decline
+                                </a>
+                            </div>
+                        }
+                        else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
+                        {
+                            <p>Confirmed</p>
+                        }
+                        else
+                        {
+                            <p>Declined</p>
+                        }
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

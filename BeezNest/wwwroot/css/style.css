@@ -26,7 +26,7 @@
         background-color: #ddd;
     }
 .sidebar a:hover:not(.active) {
-    background-color: #0196E7;
+    background-color: #D56605;
     color: white;
 }
 
@@ -44,10 +44,51 @@
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect */
     }
 
-.add-to-cart {
-    display: none; /* Initially hide the button */
+
+.cartBox {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.8);
+    z-index: 99999;
+    transition: 0.3s linear;
+    transform: scale(0);
+    visibility: hidden;
+}
+    .cartBox.active {
+        transform: scale(1);
+        visibility:visible;
+    }
+.cartBox .cart {
+        position: relative;
+        height: 70%;
+        width: 80%;
+        flex-direction: column;
+        align-items: center;
 }
 
-.card:hover .add-to-cart {
-    display: block; /* Show the button on hover */
-}
+.cartBox .cart i{
+    position:absolute;
+    right:0;
+    top:0;
+    background:red;
+    padding:10px 15px;
+    color:white;
+ }
+
+ .cartBox .cart i:hover {
+        background: #B40000;
+ }
+
+    .cartBox .cart h1{
+        
+        margin-top:2%;
+        font-size:2.8rem;
+        color:aqua;
+        text-align:center
+    }

@@ -4,6 +4,7 @@ using Core.ViewModels;
 using Logic.IHelper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace BeezNest.Controllers
@@ -30,6 +31,18 @@ namespace BeezNest.Controllers
         {
           
             return View();
+        }
+
+        [HttpPost]
+        public IActionResult CreateDropdown(Dropdown dropdownView)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.DropdownModels.Add(dropdownView);
+                _db.SaveChanges();
+               
+            }
+            return RedirectToAction("Index");
         }
 
         public IActionResult UploadedProduct()
@@ -80,7 +93,7 @@ namespace BeezNest.Controllers
             return View(uploadProductViewModels);
         }
 
-        //GET - Create/uploadproducts 
+        //GET - Create/uploadproduct 
         [HttpGet]
         public IActionResult CreateProduct()
         {
@@ -143,7 +156,7 @@ namespace BeezNest.Controllers
 
                 // Save the product and the images
                 _db.UploadProducts.Add(product);
-                _db.SaveChanges(); // Save both the product and the associated images
+                _db.SaveChanges(); 
 
                 return RedirectToAction("UploadedProducts");
             }
@@ -262,6 +275,47 @@ namespace BeezNest.Controllers
             _db.SaveChanges();
             return RedirectToAction("UploadedProducts");
         }
+
+        [HttpGet]
+        public IActionResult UploadedImages(int productId)
+        {
+           
+            var product = _db.UploadProducts
+                .Include(p => p.ProductImages) 
+                .FirstOrDefault(p => p.Id == productId);
+
+            if (product == null)
+            {
+                return NotFound(); 
+            }
+ 
+            return View(product);
+
+        }
+
+        [HttpGet]
+        public IActionResult GetStates()
+        {
+            var states = _db.DropdownModels
+                .Where(d => d.Key == "State")
+                .Select(d => new { d.Key, d.DropdownName })
+                .ToList();
+
+            return Json(states);
+        }
+
+        [HttpGet]
+        public IActionResult GetCities()
+        {
+            var cities = _db.DropdownModels
+                .Where(d => d.Key == "City")
+                .Select(d => new { d.Key, d.DropdownName })
+                .ToList();
+
+            return Json(cities);
+        }
+
+
 
     }
 }

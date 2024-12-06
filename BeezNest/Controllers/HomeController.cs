@@ -1,5 +1,6 @@
 using BeezNest.Models;
 using Core.Db;
+using Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -10,7 +11,7 @@ namespace BeezNest.Controllers
     {
 
         private readonly ApplicationDbContext _context;
-
+        
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
@@ -18,10 +19,9 @@ namespace BeezNest.Controllers
 
         public IActionResult Index()
         {
-            // Eagerly load ProductImages with UploadProducts
             var uploadProducts = _context.UploadProducts
                                          .Include(p => p.ProductImages)
-                                         .OrderByDescending(x=>x.DateSampled)// Load related images
+                                         .OrderByDescending(x => x.DateSampled)
                                          .ToList();
 
             return View(uploadProducts);
@@ -29,18 +29,33 @@ namespace BeezNest.Controllers
 
         public IActionResult ProductDetails(int productId)
         {
-            // Find the product and include related images
             var product = _context.UploadProducts
-                .Include(p => p.ProductImages) // Include related images
+                .Include(p => p.ProductImages)
                 .FirstOrDefault(p => p.Id == productId);
 
             if (product == null)
             {
-                return NotFound(); // Return 404 if product is not found
+                return NotFound();
             }
-
-            // Pass the product to the view
             return View(product);
+        }
+
+        [HttpPost]
+        public IActionResult Search(string searchString)
+        {
+            if (string.IsNullOrWhiteSpace(searchString))
+            {
+                
+                return RedirectToAction("Index");
+            }
+            var filteredProducts = _context.UploadProducts
+                 .Include(p => p.ProductImages)
+                .AsEnumerable() 
+                .Where(p => p.ProductsModel.Contains(searchString, StringComparison.OrdinalIgnoreCase)
+                || p.Specifications.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+
+            return View("SearchResults", filteredProducts);
         }
 
         public IActionResult Privacy()
