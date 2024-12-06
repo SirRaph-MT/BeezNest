@@ -7,7 +7,7 @@
 
 <style>
     .tableCenter {
-        margin-top: 150px;
+        margin-top: 110px;
     }
     table.table td h2.table-avatar {
         align-items: center;
@@ -42,11 +42,13 @@
     }
 
 </style>
+<h2 style="margin-top:120px;" class=" text-center">Transaction History</h2>
 
 @if (!Model.Any())
 {
-    <p> You have made no order.</p>
+    <p style="margin-top:100px;" class="my-5 text-center">You have not ordered from us yet</p>
 }
+
 else
 {
     <table class="table table-bordered tableCenter">
@@ -81,6 +83,7 @@ else
                     </td>
                     <td>₦@order.GrandTotal</td>
                     <td>
+
                         @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
                         {
                             <div class="w-75 btn-group" role="group">
@@ -90,12 +93,14 @@ else
                         }
                         else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
                         {
-                            <span class="badge bg-success mx-2">Confirmed and Shipped</span>
+                            <span class="badge bg-success">Confirmed and Shipped</span> <br />
+                            <span class="">Contact +112244 to keep track of your Order</span>
                   
                         }
                         else
                         {
-                            <span class="badge bg-danger mx-2">Declined</span>
+                            <span class="badge bg-danger mx-2">Declined</span> <br />
+                            <span>Contact +9159 for Enquiry</span>
                         }
 
                     </td>

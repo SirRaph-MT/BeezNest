@@ -37,10 +37,13 @@
     }
 
 </style>
+<h2 style="margin-top:120px;" class=" text-center">Orders History</h2>
+
 @if (!Model.Any())
 {
-    <p> You have made no order.</p>
+    <h5 style="margin-top:100px;" class="my-5 text-center">No Order yet</h5>
 }
+
 else
 {
     <table class="table table-bordered tableCenter">
@@ -103,11 +106,11 @@ else
                         }
                         else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
                         {
-                            <p>Confirmed</p>
+                            <p>Confirmed<span class="badge bg-success">✔</span></p>
                         }
                         else
                         {
-                            <p>Declined</p>
+                            <p>Declined<span class="badge bg-danger">✖</span></p>
                         }
 
                     </td>

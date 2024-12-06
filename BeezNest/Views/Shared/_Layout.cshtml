@@ -189,9 +189,6 @@
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Admin" asp-action="UploadedProducts">Admin Page</a>
-                        </li>
                     </ul>
                 </div>
                 <button type="button" class="btn iconShopping" data-bs-toggle="modal" data-bs-target="#cartModal">
@@ -422,6 +419,9 @@
                                 <li><a href="#">Privacy policy</a></li>
                                 <li><a href="#">Terms &amp; condition</a></li>
                                 <li><a href="#">My Account</a></li>
+                                <li>
+                                    <a  asp-area="" asp-controller="Admin" asp-action="UploadedProducts">Admin Page</a>
+                                </li>
                             </ul>
                         </div>
                         <div class="col-8 col-sm-12 col-md-3 col-lg-3 footer-links">

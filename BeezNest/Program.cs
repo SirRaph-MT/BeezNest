@@ -4,6 +4,7 @@ using Logic.Helper;
 using Logic.IHelper;
 using Core.Db;
 using Core.Models;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,7 +48,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
+UpdateDatabase(app);
 app.UseRouting();
 
 // Enable session middleware
@@ -60,3 +61,15 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.Run();
+static void UpdateDatabase(IApplicationBuilder app)
+{
+    using (var serviceScope = app.ApplicationServices
+        .GetRequiredService<IServiceScopeFactory>()
+        .CreateScope())
+    {
+        using (var context = serviceScope.ServiceProvider.GetService<ApplicationDbContext>())
+        {
+            context?.Database.Migrate();
+        }
+    }
+}
