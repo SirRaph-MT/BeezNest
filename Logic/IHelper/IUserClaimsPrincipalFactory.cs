@@ -7,7 +7,9 @@ using Core.Models;
 
 namespace Logic.IHelper
 {
-   public interface ICartHelper
+   public interface IUserClaimsPrincipalFactory
     {
+        Task<ApplicationUser> GenerateClaimsAsync(ApplicationUser user);
+
     }
 }

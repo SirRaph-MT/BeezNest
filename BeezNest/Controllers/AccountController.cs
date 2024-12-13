@@ -3,10 +3,15 @@ using Core.Models;
 using Core.ViewModels;
 using Logic.Helper;
 using Logic.IHelper;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
+
+
 
 namespace BeezNest.Controllers
 {
@@ -83,49 +88,221 @@ namespace BeezNest.Controllers
         }
 
 
+
         [HttpPost]
-        public async Task <IActionResult> Login(LoginViewModel model)
+        public async Task<IActionResult> Login(LoginViewModel model)
         {
             try
             {
-                if (model != null)
+                if (model == null)
                 {
-                    var user = _userHelper.FindUserByEmail(model.Email);
-                    if (user == null)
-                    {
-                        TempData["ErrorMessage"] = "Invalid Login Attempt.";
-                    }
-                    if (user != null)
-                    {
-                        var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, true).ConfigureAwait(false);
+                    TempData["ErrorMessage"] = "Please provide your login details.";
+                    return View(model);
+                }
 
-                        if (result.Succeeded)
-                        {
-                            var userRole = await _userManager.GetRolesAsync(user);
-                            if (userRole != null)
-                            {
-                                user.Role = userRole.FirstOrDefault();
-                            }
-                            if (user.Role?.ToLower() == "admin")
-                            {
-                                return RedirectToAction("UploadedProducts", "Admin");
-                            }
-                            else
-                            {
-                                return RedirectToAction("Index", "Home");
-                            }
-                        }
-                        TempData["ErrorMessage"] = "Invalid Login Attempt";
-                        ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
+                var user = await _userHelper.FindUserByEmailAsync(model.Email); // Ensure this is asynchronous if supported.
+                if (user == null)
+                {
+                    TempData["ErrorMessage"] = "Invalid email or password.";
+                    return View(model);
+                }
+
+                var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, true).ConfigureAwait(false);
+
+                if (result.Succeeded)
+                {
+                    var userRole = await _userManager.GetRolesAsync(user);
+                    user.Role = userRole.FirstOrDefault();
+
+                    if (user.Role?.ToLower() == "admin")
+                    {
+                        return RedirectToAction("UploadedProducts", "Admin");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Home");
                     }
                 }
-                return View();
+
+                // Handle specific failure cases for better feedback
+                if (result.IsLockedOut)
+                {
+                    TempData["ErrorMessage"] = "Your account is locked. Please try again later.";
+                }
+                else if (result.IsNotAllowed)
+                {
+                    TempData["ErrorMessage"] = "Your account is not enabled. Please contact support.";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Invalid email or password.";
+                }
+
+                return View(model);
             }
             catch (Exception ex)
             {
-                throw ex;
+                // Log the exception if needed
+                TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+                return View(model);
             }
         }
+
+        //[HttpPost]
+        //public async Task<IActionResult> Login(LoginViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (model == null)
+        //        {
+        //            TempData["ErrorMessage"] = "Please provide your login details.";
+        //            return View(model);
+        //        }
+
+        //        // Find the user by email
+        //        var user = await _userHelper.FindUserByEmailAsync(model.Email);
+        //        if (user == null)
+        //        {
+        //            TempData["ErrorMessage"] = "Invalid email or password.";
+        //            return View(model);
+        //        }
+
+        //        // Attempt password sign-in
+        //        var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, true).ConfigureAwait(false);
+
+        //        if (result.Succeeded)
+        //        {
+        //            // Add custom claims (e.g., FirstName) to the user's claims identity
+        //            await AddCustomClaims(user);
+
+        //            // Determine user role for redirection
+        //            var userRole = await _userManager.GetRolesAsync(user);
+        //            user.Role = userRole.FirstOrDefault();
+
+        //            if (user.Role?.ToLower() == "admin")
+        //            {
+        //                return RedirectToAction("UploadedProducts", "Admin");
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("Index", "Home");
+        //            }
+        //        }
+
+        //        // Handle specific failure cases for better feedback
+        //        if (result.IsLockedOut)
+        //        {
+        //            TempData["ErrorMessage"] = "Your account is locked. Please try again later.";
+        //        }
+        //        else if (result.IsNotAllowed)
+        //        {
+        //            TempData["ErrorMessage"] = "Your account is not enabled. Please contact support.";
+        //        }
+        //        else
+        //        {
+        //            TempData["ErrorMessage"] = "Invalid email or password.";
+        //        }
+
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception if needed
+        //        TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+        //        return View(model);
+        //    }
+        //}
+
+        //[HttpPost]
+        //public async Task<IActionResult> Login(LoginViewModel model)
+        //{
+        //    try
+        //    {
+        //        if (model == null)
+        //        {
+        //            TempData["ErrorMessage"] = "Please provide your login details.";
+        //            return View(model);
+        //        }
+
+        //        // Find the user by email
+        //        var user = await _userHelper.FindUserByEmailAsync(model.Email);
+        //        if (user == null)
+        //        {
+        //            TempData["ErrorMessage"] = "Invalid email or password.";
+        //            return View(model);
+        //        }
+
+        //        // Attempt password sign-in
+        //        var result = await _signInManager.PasswordSignInAsync(user.UserName, model.Password, true, true).ConfigureAwait(false);
+
+        //        if (result.Succeeded)
+        //        {
+        //            // Add custom claims (e.g., FirstName) to the user's claims identity
+        //            await AddCustomClaims(user);
+
+        //            // Determine user role for redirection
+        //            var userRole = await _userManager.GetRolesAsync(user);
+        //            user.Role = userRole.FirstOrDefault();
+
+        //            if (user.Role?.ToLower() == "admin")
+        //            {
+        //                return RedirectToAction("UploadedProducts", "Admin");
+        //            }
+        //            else
+        //            {
+        //                return RedirectToAction("Index", "Home");
+        //            }
+        //        }
+
+        //        // Handle specific failure cases for better feedback
+        //        if (result.IsLockedOut)
+        //        {
+        //            TempData["ErrorMessage"] = "Your account is locked. Please try again later.";
+        //        }
+        //        else if (result.IsNotAllowed)
+        //        {
+        //            TempData["ErrorMessage"] = "Your account is not enabled. Please contact support.";
+        //        }
+        //        else
+        //        {
+        //            TempData["ErrorMessage"] = "Invalid email or password.";
+        //        }
+
+        //        return View(model);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception if needed
+        //        TempData["ErrorMessage"] = "An error occurred while processing your request. Please try again.";
+        //        return View(model);
+        //    }
+        //}
+
+
+        private async Task AddCustomClaims(ApplicationUser user)
+        {
+            // Retrieve the current claims principal
+            var claimsPrincipal = await _signInManager.CreateUserPrincipalAsync(user);
+            var identity = claimsPrincipal.Identity as ClaimsIdentity;
+
+            if (identity != null)
+            {
+                // Check if the claim already exists
+                if (!identity.HasClaim(c => c.Type == "FirstName"))
+                {
+                    identity.AddClaim(new Claim("FirstName", user.FirstName));
+                }
+            }
+
+            // Sign in the user with updated claims
+            await HttpContext.SignOutAsync(); // Sign out the previous session
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
+        }
+
+
+
+
+
 
 
         public async Task<IActionResult> LogOut()

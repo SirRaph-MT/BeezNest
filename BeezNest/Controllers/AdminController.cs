@@ -139,7 +139,7 @@ namespace BeezNest.Controllers
                             image.CopyTo(fileStream); // Save the file to disk
                         }
 
-                        var imageUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host}/{uploadsFolder}/{fileName}";
+                        var imageUrl = $"/{uploadsFolder}/{fileName}";
 
                         // Create and add ProductImage object to UploadProduct
                         var productImage = new ProductImage

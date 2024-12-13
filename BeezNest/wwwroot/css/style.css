@@ -1,94 +1,199 @@
-.offcanvas-static {
-    position: fixed;
-    top: 55px;
-    left: 0;
-    width: 250px;
-    height: 100%;
-    background-color: #f8f9fa;
-    transition: transform 0.3s ease-in-out;
-    z-index: 1030;
-    border: solid #0196E7;
-  
-}
 
-    .offcanvas-static.hidden {
-        transform: translateX(-100%);
+/* Media Query for Mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 100%;
     }
 
-.sidebar .offcanvas-body a {
-    display: block;
-    padding: 10px;
-    color: #000;
-    text-decoration: none;
-}
-
-    .sidebar .offcanvas-body a.active {
-        background-color: #ddd;
-    }
-.sidebar a:hover:not(.active) {
-    background-color: #D56605;
-    color: white;
-}
-
-.page-wrapper{
-    margin-left:250px;
-    margin-top: 75px;
-}
-
-.card {
-    transition: transform 0.3s;
-}
-
-    .card:hover {
-        transform: scale(1.05); /* Slightly enlarge the card */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow effect */
+    .navbar .navbar-brand {
+        font-size: 1rem;
     }
 
+    .container main {
+        padding: 15px;
+    }
 
-.cartBox {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100%;
+    .offcanvas-body a {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+}
+
+
+.modal-dialog {
+    max-width: 828px !important;
+    margin: 7.7rem auto !important;
+}
+
+@media (max-width: 768px) {
+    .modal-dialog {
+        max-width: 90% !important; /* Adjust width for smaller screens */
+        margin: 2rem auto !important; /* Reduce vertical margin */
+    }
+
+    .modal-body {
+        padding: 1rem; /* Adjust padding for better mobile fit */
+    }
+
+    table.table {
+        font-size: 0.8rem; /* Smaller font size for table content */
+    }
+
+    th, td {
+        white-space: nowrap; /* Prevent table content from overflowing */
+    }
+/*
+    #cartTableBody tr {
+        display: block;  Stack rows on small screens 
+        margin-bottom: 1rem;
+    }
+
+        #cartTableBody tr td, #cartTableBody tr th {
+            display: block;
+            text-align: left;
+        }*/
+}
+
+
+    .page-wrapper {
+        margin-left: 100px;
+        margin-top: 75px;
+    }
+
+    @media (max-width: 576px) {
+        .page-wrapper {
+            margin-left: 0;
+        }
+    }
+
+
+    .carousel-inner img {
+        object-fit: cover;
+        max-height: 500px; /* Adjust as needed */
+    }
+
+    @media (max-width: 576px) {
+        .carousel-inner img {
+            max-height: 300px;
+        }
+    }
+
+
+    /* General Footer Styles */
+    #footer {
+        background-color: #0196E7;
+        color: white;
+    }
+
+        #footer .footer-3 ul {
+            padding: 0;
+            list-style-type: none;
+        }
+
+        #footer h5 {
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        /* Newsletter */
+        #footer .form-control {
+            border-radius: 20px;
+        }
+
+        #footer .btn {
+            border-radius: 20px;
+        }
+
+    /* Media Query for Smaller Screens */
+    @media (max-width: 576px) {
+        #footer .row > div {
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        #footer .form-control, #footer .btn {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+    }
+
+    /* For Payment History Page*/
+    @media (max-width: 576px) {
+        .stock-card span {
+            font-size: 0.8rem; /* Further reduce text size for very small screens */
+        }
+    }
+
+
+    @media (max-width: 768px) {
+        .btn-group.flex-wrap .btn {
+            margin-bottom: 5px;
+        }
+    }
+
+
+    /*Products DEtails*/
+
+/* General responsiveness for the layout */
+.background {
+    margin-top: 90px;
+    padding: 15px;
+}
+
+/* Ensure images are responsive */
+#mainImage {
+    height: auto;
+    max-height: 400px;
     width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(0,0,0,0.8);
-    z-index: 99999;
-    transition: 0.3s linear;
-    transform: scale(0);
-    visibility: hidden;
-}
-    .cartBox.active {
-        transform: scale(1);
-        visibility:visible;
-    }
-.cartBox .cart {
-        position: relative;
-        height: 70%;
-        width: 80%;
-        flex-direction: column;
-        align-items: center;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
-.cartBox .cart i{
-    position:absolute;
-    right:0;
-    top:0;
-    background:red;
-    padding:10px 15px;
-    color:white;
- }
+.img-thumbnail {
+    height: 75px;
+    width: auto;
+    object-fit: cover;
+    border-radius: 5px;
+}
 
- .cartBox .cart i:hover {
-        background: #B40000;
- }
-
-    .cartBox .cart h1{
-        
-        margin-top:2%;
-        font-size:2.8rem;
-        color:aqua;
-        text-align:center
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+    .background {
+        max-width: 100%;
+        padding: 10px;
     }
+
+    .col-6 {
+        flex: 0 0 100%; /* Stack the columns */
+        max-width: 100%;
+    }
+
+    #mainImage {
+        height: auto; /* Let the height adjust dynamically */
+        max-height: 300px; /* Smaller height for smaller screens */
+    }
+
+    .img-thumbnail {
+        height: 50px;
+    }
+
+    #quantityInput {
+        width: 50px;
+    }
+
+    .hoverEffect button {
+        font-size: 0.9rem;
+    }
+}
+
+/* Adjust dropdown and buttons for smaller screens */
+@media (max-width: 576px) {
+    .form-select {
+        font-size: 0.9rem;
+    }
+
+    #addToCart {
+        font-size: 0.8rem;
+        padding: 10px;
+    }
+}

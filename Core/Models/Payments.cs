@@ -23,7 +23,7 @@ namespace Core.Models
     public class PaymentsViewModel
     {
         public int Id { get; set; }
-        public string? PaymentDate { get; set; }
+        public DateTime? PaymentDate { get; set; }
         public string? User { get; set; }
         public string? ClientEmail { get; set; }
         public string? StocksInString { get; set; }
@@ -32,6 +32,8 @@ namespace Core.Models
         public decimal? GrandTotal { get; set; }
         public string? Specifications { get; set; }
         public string? Name { get; set; }
+        public string? Address { get; set; }
+        public string? PhoneNumber { get; set; }
         public double? Quantity { get; set; }
 
         public string? ProofOfPaymentPath { get; set; }
@@ -46,6 +48,8 @@ namespace Core.Models
     }
     public class Stock
     {
+        // THIS SHOULD MATCH WITH PRODUCIID FROM UPLOADED PRODUCT DB
+        public int StockId { get; set; }
         public string? Name { get; set; }
         public string? Specifications { get; set; }
         public decimal? UnitPrice { get; set; }

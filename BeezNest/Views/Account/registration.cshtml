@@ -2,11 +2,10 @@
 
 @{
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
-   ViewData["Title"] = "Register";
+    ViewData["Title"] = "Register";
 }
 <style>
-    body, html 
-    {
+    body, html {
         height: 100%;
     }
 
@@ -15,9 +14,9 @@
         justify-content: center;
         align-items: center;
         height: 100%;
-       
     }
-     .card-body{
+
+    .card-body {
         margin-top: 70px;
     }
 </style>
@@ -29,99 +28,104 @@
             <div>
                 <div class="">
                     <input id="role" type="hidden" value="User" />
-                    <div class="row">
-                        <div class="mb-3 mt-3 col">
+                    <div class="row g-3">
+                        <!-- First Name -->
+                        <div class="col-lg-6 col-12">
                             <label>First Name:</label>
-                            <input type="text" class="form-control w-100" id="firstName" placeholder="Firstname">
+                            <input type="text" class="form-control" id="firstName" placeholder="Firstname">
                         </div>
-                        <div class="mb-3 mt-3 col">
+                        <!-- Last Name -->
+                        <div class="col-lg-6 col-12">
                             <label>Last Name:</label>
-                            <input type="text" class="form-control w-100" id="lastName" placeholder="Lastname" >
+                            <input type="text" class="form-control" id="lastName" placeholder="Lastname">
                         </div>
-                        <div class="mb-3 mt-3 col">
+                        <!-- Phone -->
+                        <div class="col-lg-6 col-12">
                             <label>Phone:</label>
-                            <input type="number" class="form-control w-100" id="phoneNumber" placeholder="Enter Phone Number">
-                            <small class="form-text text-muted">Enter a valid phone .</small>
+                            <input type="number" class="form-control" id="phoneNumber" placeholder="Enter Phone Number">
+                            <small class="form-text text-muted">Enter a valid phone.</small>
                         </div>
-                       
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 mt-3 col">
+                        <!-- State -->
+                        <div class="col-lg-6 col-12">
                             <label>State:</label>
-                            <select class="form-control w-100" id="state">
+                            <select class="form-control" id="state">
                                 <option value="">Select State</option>
                             </select>
                         </div>
-                        <div class="mb-3 mt-3 col">
+                        <!-- City -->
+                        <div class="col-lg-6 col-12">
                             <label>City:</label>
-                            <select class="form-control w-100" id="city">
+                            <select class="form-control" id="city">
                                 <option value="">Select City</option>
                             </select>
                         </div>
-                        <div class="mb-3 mt-3 col">
+                        <!-- Address -->
+                        <div class="col-lg-6 col-12">
                             <label>Address:</label>
-                            <input type="text" class="form-control w-100" id="address" placeholder="Enter address">
+                            <input type="text" class="form-control" id="address" placeholder="Enter address">
                             <small class="form-text text-muted">Address of residence.</small>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="mb-3 mt-3 col">
-                            <label>Email:</label>
-                            <input type="email" class="form-control w-100" id="email" placeholder="Enter email" >
-                        </div>
-                        <div class="mb-3 mt-3 col">
+                    
+                        <!-- Password -->
+                        <div class="col-lg-6 col-12">
                             <label>Password:</label>
-                            <input type="password" class="form-control w-100" id="password" placeholder="Enter password">
+                            <input type="password" class="form-control" id="password" placeholder="Enter password">
                             <small class="form-text text-muted">Password must be at least 5 characters.</small>
                         </div>
-                        <div class="mb-3 mt-3 col">
+                        <!-- Confirm Password -->
+                        <div class="col-lg-6 col-12">
                             <label>Confirm Password:</label>
-                            <input type="password" class="form-control w-100" id="confirmPassword" placeholder="Confirm password">
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm password">
                         </div>
-                       
                     </div>
-                    
-                    
-                    
-                    <div class="mx-auto">
-                        <button type="submit" class="btn btn-secondary w-25" onclick="registration()">Submit</button>
+                    <!-- Email -->
+                    <div class="col-12">
+                        <label>Email:</label>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email">
                     </div>
+
+                    <!-- Submit Button -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-secondary w-50" onclick="registration()">Submit</button>
                     </div>
-                
+
+                    <!-- Login Redirect -->
+                    <div class="text-center mt-2">
+                        <small>Already have an account? <a asp-controller="Account" asp-action="Login">Login</a></small>
+                    </div>
+                </div>
             </div>
-            <small class="text-center"> already have an account? <a asp-controller="Account" asp-action="Login">Login</a></small>
-
-
         </div>
     </div>
 </div>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const stateDropdown = document.getElementById("state");
         const cityDropdown = document.getElementById("city");
 
-  
-        fetch('/Admin/GetStates') 
-       
+
+        fetch('/Admin/GetStates')
+
             .then(response => response.json())
             .then(states => {
                 states.forEach(state => {
                     const option = document.createElement("option");
-                    option.value = state.dropdownName; 
-                    option.textContent = state.dropdownName; 
+                    option.value = state.dropdownName;
+                    option.textContent = state.dropdownName;
                     stateDropdown.appendChild(option);
                 });
             });
 
-     
-        fetch('/Admin/GetCities') 
+
+        fetch('/Admin/GetCities')
             .then(response => response.json())
             .then(cities => {
                 cities.forEach(city => {
                     const option = document.createElement("option");
-                    option.value = city.dropdownName; 
-                    option.textContent = city.dropdownName; 
+                    option.value = city.dropdownName;
+                    option.textContent = city.dropdownName;
                     cityDropdown.appendChild(option);
                 });
             });

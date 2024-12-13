@@ -5,6 +5,117 @@
 
 <div class="container p-3">
     <div class="row pt-4">
+        <div class="col-md-6 col-sm-12">
+            <h2 class="text-primary">All Products</h2>
+        </div>
+        <div class="col-md-6 col-sm-12 text-md-end text-sm-start mt-sm-2">
+            <a asp-controller="Admin" asp-action="CreateProduct" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> &nbsp; Add New Products
+            </a>
+        </div>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <h5 class="my-5 text-center">No products uploaded yet</h5>
+}
+else
+{
+    <div class="table table-responsive table-bordered">
+        <table id="Productstable" class="">
+            <thead>
+                <tr>
+                    <th>Product Model</th>
+                    <th>Price</th>
+                    <th>Specifications</th>
+                    <th>Product Images</th>
+                    <th>Number of Items</th>
+                    <th>Date Sampled</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td>@product.ProductsModel</td>
+                        <td>₦@(product.Price.HasValue ? product.Price.Value.ToString("N2") : "#0.00")</td>
+                        <td>@product.Specifications</td>
+                        @if (string.IsNullOrEmpty(product.UploadedImage))
+                        {
+                            <td></td>
+                        }
+                        else
+                        {                    
+                            <td>
+                                <a asp-controller="Admin" asp-action="UploadedImages" asp-route-productId="@product.Id" style="color: inherit;">
+                                    <img src="@product.UploadedImage" class="img-fluid" width="100" />
+                                </a>
+                            </td>                    
+                        }
+                        <td>@product.NumberOfItem</td>
+                        <td>@product.DateSampled?.ToString("dd-MMM-yyyy")</td>
+                        <td>
+                            <div class="btn-group flex-wrap" role="group">
+                                <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="EditProduct" class="btn btn-primary">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+                                <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="DeleteProduct" class="btn btn-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet" />
+
+@section script {
+    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#Productstable').DataTable({
+                "paging": true,
+                "pageLength": 5,
+                "lengthMenu": [5, 10, 25, 50],
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "responsive": true
+            });
+        });
+    </script>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* @model IEnumerable<Core.ViewModels.UploadProductViewModel>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
         <div class="col-6">
             <h2 class="text-primary">All Products</h2>
         </div>
@@ -89,3 +200,4 @@ else
 
 }
 
+ *@

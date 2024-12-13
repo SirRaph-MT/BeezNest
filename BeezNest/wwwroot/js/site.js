@@ -103,11 +103,10 @@ function registration() {
     });
 }
 
-
 function showSidebar() {
-    document.getElementById("toggleablesidebar").classList.toggle("hidden");
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('show');
 }
-
 // Add to Cart Function
 function addToCart() {
     debugger
@@ -270,7 +269,7 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
 
             // Update haulage fee and grand total fields
             if (haulageFeeField) {
-                haulageFeeField.value = `₦${haulageFee.toLocaleString()}`;
+                haulageFeeField.value = `₦${haulageFee.toLocaleString()} (2% of your total orders)`;
             }
             if (grandTotalField) {
                 grandTotalField.value = `₦${grandTotal.toLocaleString()}`;
@@ -279,137 +278,6 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
     }
 });
 
-//function checkOutNow(userEmail) {
-//    debugger
-//    var data = {};
-//    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-//    let totalItems = 0;
-//    let totalPrice = 0;
-//    let itemsList = [];
-
-//    cartItems.forEach(item => {
-//        var quantity = parseInt(item.Quantity) || 0;
-//        var productName = item.Name;
-//        var specifications = item.Specifications;
-//        var unitPrice = parseFloat(item.Price.toString().replace(/,/g, "")) || 0;
-//        var total = unitPrice * quantity;
-
-//        totalItems += quantity;
-//        totalPrice += total;
-
-//        itemsList.push({
-//            Name: productName,
-//            Quantity: quantity,
-//            Specifications: specifications,
-//            UnitPrice: unitPrice,
-//            Total: total
-//        });
-//    });
-
-//    const haulageFee = parseFloat((totalPrice * 0.02).toFixed(2));
-//    data.GrandTotal = totalPrice + haulageFee;
-//    data.ClientEmail = userEmail;
-//    data.StocksInString = JSON.stringify(itemsList);
-//    $.ajax({
-//        type: 'POST',
-//        url: '/Payment/UserCheckOut',
-//        dataType: 'json',
-//        data:
-//        {
-//            stockDetails: JSON.stringify(data)
-//        },
-//        success: function (result) {
-//            if (!result.isError) {
-//                localStorage.removeItem('cart')
-//                var url = "/Home/Index";
-//                successAlertWithRedirect(result.msg, url);
-//            } else {
-//                errorAlert(result.msg)
-//            }
-//        },
-//        error: function (ex) {
-//            $('#validationSummary').text("Error occurred. Please try again.");
-//        }
-//    });
-//}
-
-//function checkOutNow(userEmail) {
-//    debugger;
-
-//    // Retrieve cart items from localStorage
-//    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-//    if (cartItems.length === 0) {
-//        errorAlert("Your cart is empty. Add items to proceed.");
-//        return;
-//    }
-
-//    let totalItems = 0;
-//    let totalPrice = 0;
-//    const itemsList = cartItems.map(item => {
-//        const quantity = parseInt(item.Quantity) || 0;
-//        const unitPrice = parseFloat(item.Price.toString().replace(/,/g, "")) || 0;
-//        const total = unitPrice * quantity;
-
-//        totalItems += quantity;
-//        totalPrice += total;
-
-//        return {
-//            Name: item.Name,
-//            Quantity: quantity,
-//            Specifications: item.Specifications,
-//            UnitPrice: unitPrice,
-//            Total: total
-//        };
-//    });
-
-
-//    const haulageFee = parseFloat((totalPrice * 0.02).toFixed(2));
-//    const grandTotal = totalPrice + haulageFee;
-
-
-//    const formData = new FormData();
-//    formData.append("stockDetails", JSON.stringify({
-//        GrandTotal: grandTotal,
-//        ClientEmail: userEmail,
-//        StocksInString: JSON.stringify(itemsList)
-//    }));
-
-
-//    const fileInput = document.querySelector("input[type='file']");
-//    if (fileInput && fileInput.files.length > 0) {
-//        formData.append("ProofOfPayment", fileInput.files[0]);
-//    } else {
-//        errorAlert("Please upload proof of payment before submitting.");
-//        return;
-//    }
-
-
-//    $.ajax({
-//        type: 'POST',
-//        url: '/Payment/UserCheckOut',
-//        data: formData,
-//        processData: false,
-//        contentType: false,
-//        success: function (result) {
-//            if (!result.isError) {
-//                localStorage.removeItem('cart');
-//                successAlertWithRedirect(result.msg, "/Payment/PaymentHistory");
-//            } else {
-//                errorAlert(result.msg);
-//            }
-//        },
-//        error: function () {
-//            $('#validationSummary').text("Error occurred. Please try again.");
-//        }
-//    });
-//}
-
-
-
-
-
-
-// Event Delegation for Quantity Update and Item Removal
 
 function checkOutNow(userEmail) {
     debugger;
@@ -492,6 +360,7 @@ function checkOutNow(userEmail) {
 
 
 document.getElementById('cartTableBody').addEventListener('click', function (e) {
+    debugger
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const target = e.target;
 

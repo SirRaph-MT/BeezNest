@@ -26,32 +26,51 @@
                 color: #FFD700;
             }
 
+
+        /* General Styles */
+        .navbar {
+            padding: 0.5rem 1rem;
+        }
+
+        /* Search Bar */
+        .input-group input {
+            height: 40px;
+            border: 1px solid #ced4da;
+        }
+
+        .mx-3 {
+            margin-left: 5rem !important;
+        }
+
+        .input-group button {
+            height: 40px;
+        }
+
+        /* Cart Badge */
+        .cartCounterBadge {
+            background-color: orange;
+            color: white;
+            font-size: 12px;
+            border-radius: 50%;
+            padding: 3px 7px;
+            margin-left: -10px;
+            position: relative;
+            top: -5px;
+            left: -5px;
+        }
+
+     
+
         .input-group {
             width: 100%;
             height: 55px;
         }
 
 
-
-        .SearchForm {
-            position: fixed;
-            top: 60px; 
-            width: 75%;
-            z-index: 9999; 
-            background-color: #fff;
-            margin-left: 200px;
-        }
-
-        .modal-dialog {
-            max-width: 828px !important;
-            margin: 7.7rem auto !important;
-        }
-
-        .cartCounterBadge {
+       /*  .cartCounterBadge {
             position: relative;
             bottom: 10px;
-            /*             right: -10px;
-         */ background-color: #d61d1d;
+            background-color: #d61d1d;
             color: white;
             border-radius: 50%;
             width: 23px;
@@ -61,7 +80,7 @@
             justify-content: center;
             font-size: 10px;
             font-weight: bolder;
-        }
+        } */
 
         #checkoutContainer{
             background-color: #0196E7 !important;
@@ -173,57 +192,85 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light  border-bottom box-shadow mb-3 fixed-top">
-            <div class="container-fluid">
-                <button class="btn text-white" type="button" data-bs-toggle="offcanvas" data-bs-target="#demo">
-                    <span><i class="fa-solid fa-bars"></i></span>
+        <nav class="navbar navbar-expand-sm navbar-light bg-light border-bottom box-shadow fixed-top">
+            <div class="container">
+                <!-- Logo -->
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/StockPhotos/websiteLogo.jpeg" alt="BeezNest Logo" class="img-fluid"
+                         style="height: 40px; width: auto; margin-right: 10px;">
+                    <span>BeezNest</span>
+                </a>
+
+                <!-- Search Bar (Desktop) -->
+                <form class="input-group d-none d-sm-flex mx-3" method="post" asp-controller="Home" asp-action="Search" role="search">
+                    <input name="searchString" type="text" class="form-control" placeholder="Search for a product here..."
+                           aria-label="Search input" style="border-radius: 20px 0 0 20px;">
+                    <button type="submit" class="btn btn-outline-dark" style="border-radius: 0 20px 20px 0;">
+                        <i class="fa-solid fa-magnifying-glass"></i> Search
+                    </button>
+                </form>
+
+                <!-- Cart Icon -->
+                <button type="button" class="btn iconShopping ms-auto ms-sm-0" data-bs-toggle="modal" data-bs-target="#cartModal">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    <span class="cartCounterBadge">2</span>
                 </button>
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">BeezNest</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+
+                <!-- Navbar Toggler -->
+                <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-                <button type="button" class="btn iconShopping" data-bs-toggle="modal" data-bs-target="#myModal">
-                    <i  class="fa-solid fa-cart-shopping"></i><span class="cartCounterBadge"></span>
-                </button>
 
-                <div class="ms-5">
-                    <ul class="navbar-nav">
-
+                <!-- Collapsible Navbar Content -->
+                <div class="collapse navbar-collapse" id="navbarContent">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Order History -->
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Payment" asp-action="PaymentHistory">
+                                <i class="fa-solid fa-clock me-2"></i> Order History
+                            </a>
+                        </li>
+                        <!-- Authentication Links -->
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item account">
-                                <a class="nav-link text-white" asp-controller="Account" asp-action="LogOut">LogOut</a>
+                            <li class="nav-item">
+                                <span class="nav-link d-flex align-items-center">
+                                    <i class="fa-solid fa-user me-2"></i>
+                                    Welcome @User.Claims.FirstOrDefault(c => c.Type == "FirstName")?.Value &nbsp;
+                                    <a asp-controller="Account" asp-action="LogOut" class="ms-3 text-danger">LogOut</a>
+                                </span>
                             </li>
                         }
                         else
                         {
-                            <li class="nav-item account">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Account" asp-action="Login">
+                                    <i class="fa-solid fa-sign-in-alt me-2"></i> Login
+                                </a>
                             </li>
-
-                            <li class="nav-item account">
-                                <a class="nav-link text-white" asp-area="" asp-controller="Account" asp-action="registration">Register</a>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Account" asp-action="Registration">
+                                    <i class="fa-solid fa-user-plus me-2"></i> Register
+                                </a>
                             </li>
                         }
-
                     </ul>
                 </div>
             </div>
-        </nav>
 
+            <!-- Search Bar (Mobile) -->
+            <form class="input-group d-sm-none px-3 mt-2" method="post" asp-controller="Home" asp-action="Search" role="search">
+                <input name="searchString" type="text" class="form-control" placeholder="Search for a product here..."
+                       aria-label="Search input" style="border-radius: 20px 0 0 20px;">
+                <button type="submit" class="btn btn-outline-dark" style="border-radius: 0 20px 20px 0;">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+        </nav>
+    </header>
         <!-- The Modal -->
-        <div class="modal" id="myModal">
+        <div class="modal" id="cartModal">
             <div class="modal-dialog">
                 <div class="modal-content">
 
@@ -234,7 +281,7 @@
                     </div>
 
                     <!-- Modal body -->
-                    <div class="modal-body">
+                    <div class="modal-body" style="overflow-x:auto;">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -281,42 +328,45 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>Total number of orders</th>
-                                    <th>Total price of orders</th>
-                                    <th>Haulage Fee</th>
-                                    <th>Grand Total Fee</th>
+                                    <th>Product Name</th>
+                                    <th>Specifications</th>
+                                    <th>Unit Price</th>
+                                    <th>Quantity</th>
+                                    <th>Total</th>
                                 </tr>
                             </thead>
                             <tbody id="checkoutTableBody">
-
+                                <!-- Rows will be dynamically inserted here -->
                             </tbody>
                         </table>
+                        <div class="mt-3">
+                            <div class="d-flex justify-content-between">
+                                <label>Haulage Fee:</label>
+                                <input id="haulageFee" class="form-control w-50" type="text" readonly />
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <label>Grand Total:</label>
+                                <input id="grandTotal" class="form-control w-50" type="text" readonly />
+                            </div>
+                        </div>
                         <div class="mt-3 text-center">
-                            <label>Select Payment type</label>
+                            <label>Select Payment Type:</label>
                             <select class="form-control">
-                                <option>Transfer</option>                   
+                                <option>Transfer</option>
+                          
                             </select>
                         </div>
                     </div>
 
                     <!-- Modal footer -->
                     <div class="modal-footer">
-                        <a class="btn btn-dark text-center" asp-controller="Payment" asp-action="Index">Pay Now </a>
+                        <a class="btn btn-dark text-center" asp-controller="Payment" asp-action="Index">Pay Now</a>
                         <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
                     </div>
 
                 </div>
             </div>
         </div>
-
-
-
-        <form class="input-group new-input SearchForm" method="post" asp-controller="Home" asp-action="Search">
-            <input name="searchString" type="text" class="form-control h3" placeholder="Search for a product here..." />
-            <button type="submit" class="btn btn-outline-dark" aria-label="Search">
-                <i class="fa-solid fa-magnifying-glass"></i>Search
-            </button>
-        </form>
 
 
         <div class="sidebar">
@@ -334,7 +384,7 @@
             </div>
 
         </div>
-    </header>
+
 
     <div id="UserEmail" style="display:none;">
         @User?.Identity.Name
@@ -346,66 +396,70 @@
         </main>
     </div>
 
-    <footer id="footer" class="footer-3" style="position: absolute">
+    <footer id="footer" class="footer-3">
         <div class="site-footer">
-            <div class="container-fluid" style="background-color: #0196E7">
-                <!--Footer Links-->
-                <div class="footer-top">
-                    <div class="row" style="color:white">
-                        <div class="col-8 col-sm-12 col-md-3 col-lg-3 contact-box">
-                            <h5>ABOUT US</h5>
-                            <ul class="addressFooter">
-                                <li><p>Beeznest is poised as the leading platform for Gadgets and accessories in Nigeria which gives a seameless transactional experiences and unbeatable friendly cost </p> </li>
-                                <li><i class="fa-whatsapp"></i><p>07039305088</p></li>
-                                <li class="email"><i class="icon anm anm-envelope-l"></i><p>Beeznest@gmail.com</p></li>
-                            </ul>
-                        </div>
-                        <div class="col-8 col-sm-12 col-md-3 col-lg-3 footer-links">
-                            <h5>Quick Shop</h5>
-                            <ul>
-                                <li><a href="#">Buy</a></li>
-                                <li><a href="#">Sell</a></li>
-                                <li><a href="#">Repair</a></li>
-                                <li><a href="#">Swap</a></li>
-                                <li><a href="#">Others</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-8 col-sm-12 col-md-3 col-lg-3 footer-links">
-                            <h4 class="h4">Informations</h4>
-                            <ul>
-                                <li><a href="#">About us</a></li>
-                                <li><a href="#">Careers</a></li>
-                                <li><a href="#">Privacy policy</a></li>
-                                <li><a href="#">Terms &amp; condition</a></li>
-                                <li><a href="#">My Account</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-8 col-sm-12 col-md-3 col-lg-3 footer-links">
-                            <h4 class="h4">Customer Services</h4>
-                            <ul>
-                                <li><a href="#">Request Personal Data</a></li>
-                                <li><a href="#">FAQ's</a></li>
-                                <li><a href="#">Contact Us</a></li>
-                                <li><a href="#">Orders and Returns</a></li>
-                                <li><a href="#">Support Center</a></li>
-                            </ul>
-                        </div>
-                        <div class="col-8 col-sm-12 col-md-3 col-lg-3">
-                            <div class="display-table">
-                                <div class="display-table-cell footer-newsletter">
-                                    <form action="#" method="post">
-                                        <label class="h4">Newsletter</label>
-                                        <p>Be the first to hear about new mobile and get to see products that are on promo..</p>
-                                        <div class="input-group">
-                                            <input type="email" class="input-group__field newsletter__input" name="EMAIL" value="" placeholder="Email address" required="">
-                                            <span class="input-group__btn">
-                                                <button type="submit" class="btn newsletter__submit" name="commit" id="Subscribe"><span class="newsletter__submit-text--large">Subscribe</span></button>
-                                            </span>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+            <div class="container-fluid bg-primary text-white py-4">
+                <!-- Footer Links -->
+                <div class="row">
+                    <!-- About Us -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <h5>About Us</h5>
+                        <ul class="list-unstyled">
+                            <li>
+                                <p>Beeznest is poised as the leading platform for gadgets and accessories in Nigeria, offering seamless transactions and unbeatable friendly costs.</p>
+                            </li>
+                            <li><i class="fa-brands fa-whatsapp"></i> <p>07039305088</p></li>
+                            <li><i class="fa-solid fa-envelope"></i> <p>Beeznest@gmail.com</p></li>
+                        </ul>
+                    </div>
+
+                    <!-- Quick Shop -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <h5>Quick Shop</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white text-decoration-none">Buy</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Sell</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Repair</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Swap</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Others</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Information -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <h5>Information</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white text-decoration-none">About us</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Careers</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Privacy policy</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Terms & Conditions</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">My Account</a></li>
+                            <li><a asp-area="" asp-controller="Admin" asp-action="UploadedProducts" class="text-white text-decoration-none">Admin Page</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Customer Services -->
+                    <div class="col-12 col-sm-6 col-md-3">
+                        <h5>Customer Services</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#" class="text-white text-decoration-none">Request Personal Data</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">FAQs</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Contact Us</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Orders and Returns</a></li>
+                            <li><a href="#" class="text-white text-decoration-none">Support Center</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Newsletter -->
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5>Newsletter</h5>
+                        <p>Be the first to hear about new products and promotions.</p>
+                        <form action="#" method="post" class="d-flex">
+                            <input type="email" class="form-control me-2" name="EMAIL" placeholder="Email address" required>
+                            <button type="submit" class="btn btn-warning">Subscribe</button>
+                        </form>
                     </div>
                 </div>
             </div>

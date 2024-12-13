@@ -33,12 +33,14 @@ namespace BeezNest.Controllers
                     Id = s.Id,
                     GrandTotal = s.GrandTotal,
                     User = s.Client.FirstName,
+                    Address = s.Client.Address,
+                    PhoneNumber = s.Client.PhoneNumber,
                     ProofOfPaymentPath = s.ProofOfPaymentPath,
                     //Stocks = JsonConvert.DeserializeObject<List<Stock>>(s.Stock),
                     Stocks = string.IsNullOrEmpty(s.Stock)
                                 ? new List<Stock>()
                                 : JsonConvert.DeserializeObject<List<Stock>>(s.Stock),
-                    PaymentDate = s.PaymentDate.Value.ToString("dd-MM-YY"),
+                    PaymentDate = s.PaymentDate,
                     PaymentStatus = s.PaymentStatus
                 }).ToList();
             return View(payments);

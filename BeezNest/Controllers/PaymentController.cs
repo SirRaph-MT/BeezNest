@@ -35,7 +35,7 @@ namespace BeezNest.Controllers
                     GrandTotal = s.GrandTotal,
                     User = s.Client.FirstName,
                     Stocks = JsonConvert.DeserializeObject<List<Stock>>(s.Stock),
-                    PaymentDate = s.PaymentDate.Value.ToString("dd-MM-YYYY"),
+                    PaymentDate = s.PaymentDate,
                     PaymentStatus = s.PaymentStatus,
                     
                 }).ToList();
@@ -195,15 +195,51 @@ namespace BeezNest.Controllers
         [HttpGet]
         public IActionResult ConfirmOrderPayment(int Id)
         {
-            var order = db.Payments.FirstOrDefault(p => p.Active && p.PaymentStatus == PaymentStatus.Pending && p.Id == Id);
+            if (Id != 0)
+            {
+                var order = db.Payments.FirstOrDefault(p => p.Active && p.PaymentStatus == PaymentStatus.Pending && p.Id == Id);
 
-            if (order == null) return RedirectToAction("ClientOrders", "Orders");
-
-            order.PaymentStatus = PaymentStatus.Confirm;
-            db.SaveChanges(); 
+                if (order == null) return RedirectToAction("ClientOrders", "Orders");
+                UpdateWarehouseInventory(order);
+                order.PaymentStatus = PaymentStatus.Confirm;
+                db.SaveChanges();
+            }          
 
             return RedirectToAction("ClientOrders", "Orders");
         }
+
+        public void UpdateWarehouseInventory(Payments paymentDetails)
+        {
+            if (paymentDetails == null || string.IsNullOrEmpty(paymentDetails.Stock))
+                return;
+
+            // Deserialize stocks from payment details
+            var stocksFromPayment = JsonConvert.DeserializeObject<List<Stock>>(paymentDetails.Stock);
+            if (stocksFromPayment == null || !stocksFromPayment.Any())
+                return;
+
+            // Load all relevant products in one query
+            var productNames = stocksFromPayment.Select(stock => stock.Name).Distinct().ToList();
+            var productsInShop = db.UploadProducts.Where(p => productNames.Contains(p.ProductsModel)).ToList();
+
+            foreach (var stock in stocksFromPayment)
+            {
+                if (stock == null)
+                    continue;
+
+                var product = productsInShop.FirstOrDefault(p => p.ProductsModel == stock.Name);
+                if (product?.NumberOfItem > 0)
+                {
+                    var numberOfStockRemaining = product.NumberOfItem - stock.Quantity;
+                    product.NumberOfItem = Convert.ToInt32(numberOfStockRemaining > 0 ? numberOfStockRemaining : 0); // Ensure non-negative stock
+                    db.UploadProducts.Update(product);
+                }
+            }
+
+            db.SaveChanges();
+        }
+
+
         [HttpGet]
          public IActionResult DeclineOrderPayment(int Id)
         {

@@ -1,58 +1,46 @@
-﻿@model Core.Models.UploadProduct
+﻿@model Core.ViewModels.ProductDetailsViewModel
 
 
 @{
     Layout = "~/Views/Shared/_UserLayout.cshtml";
     ViewData["Title"] = "Product Details";
 }
-<style>
-    .background {
-        margin-top:90px;
 
-    }
-
-    .hoverEffect button:hover {
-        background-color: #D56605;
-    }
-</style>
 <div class="d-flex justify-content-center align-items-center my-4">
     <div class="border p-4 rounded background" style="max-width: 900px; width: 100%;">
         <div class="row">
             <div class="col-6">
                 <div class="mb-3">
-                    <img id="mainImage" src="@Model.ProductImages.FirstOrDefault()?.ImageUrl" class="img-fluid" alt="@Model.ProductsModel" style="height: 400px; object-fit: cover; border-radius: 5px;" />
+                    <img id="mainImage" src="@Model.ProductDetails.ProductImages?.FirstOrDefault()?.ImageUrl" class="img-fluid" alt="@Model.ProductDetails.ProductsModel" style="height: 400px; object-fit: cover; border-radius: 5px;" />
                 </div>
                 <div class="d-flex justify-content-between overflow-auto">
-                    @foreach (var image in Model.ProductImages) 
+                    @foreach (var image in Model.ProductDetails.ProductImages)
                     {
-                            <img src="@image.ImageUrl" class="img-thumbnail" style="height: 75px" alt="Thumbnail" onclick="changeImage('@image.ImageUrl')" />
+                        <img src="@image.ImageUrl" class="img-thumbnail" style="height: 75px" alt="Thumbnail" onclick="changeImage('@image.ImageUrl')" />
                     }
                 </div>
             </div>
 
-            <!-- Product Details Section -->
             <div class="col-6">
-                <input id="ProductId" type="hidden" value="@Model.Id" />
-                <p id="prodModel"><strong>Product: </strong>@Model.ProductsModel</p>
-                <p id="spec"><strong>Specifications: </strong>@Model.Specifications</p>
-                <p id="price"><strong>Price: </strong>₦@Model.Price?.ToString("N2")</p>
-                <p><strong id="numberOfItem">Available Items: </strong>@Model.NumberOfItem</p>
-                <p><strong>Available Colors:</strong></p>                
-                    <select id="colorSelect" class="form-select mb-3">
-                    @if (!string.IsNullOrEmpty(Model.Colors))
+                <input id="ProductId" type="hidden" value="@Model.ProductDetails.Id" />
+                <p id="prodModel"><strong>Product: </strong>@Model.ProductDetails.ProductsModel</p>
+                <p id="spec"><strong>Specifications: </strong>@Model.ProductDetails.Specifications</p>
+                <p id="price"><strong>Price: </strong>₦@Model.ProductDetails.Price?.ToString("N2")</p>
+                <p><strong id="numberOfItem">Available Items: </strong>@Model.ProductDetails.NumberOfItem</p>
+                <p><strong>Available Colors:</strong></p>
+                <select id="colorSelect" class="form-select mb-3">
+                    @if (!string.IsNullOrEmpty(Model.ProductDetails.Colors))
                     {
-                     foreach (var color in Model.Colors.Split(','))
-                      {
-                      <option value="@color.Trim()">@color.Trim()</option>
-                      }
+                        foreach (var color in Model.ProductDetails.Colors.Split(','))
+                        {
+                            <option value="@color.Trim()">@color.Trim()</option>
+                        }
                     }
                     else
                     {
-                      <option value="">No specific colors available</option>
+                        <option value="">No specific colors available</option>
                     }
-                    </select>
-
-
+                </select>
 
                 <div class="d-flex align-items-center mb-3">
                     <button type="button" class="btn btn-outline-secondary" onclick="decreaseQuantity()">-</button>
@@ -61,17 +49,58 @@
                 </div>
                 <div class="hoverEffect">
                     <button id="addToCart" class="btn btn-dark w-75" onclick="addToCart()">Add to Cart</button>
-                </div>               
+                </div>
             </div>
         </div>
     </div>
-</div> 
-<br />
+</div>
+
+<hr />
+<div class="p-2 border-2 text-center h2">
+    <div class="spinner-border text-dark"></div>
+    <div class="spinner-border text-primary"></div>
+    <div class="spinner-border text-warning"></div>High In Demands
+    <div class="spinner-border text-dark"></div>
+    <div class="spinner-border text-primary"></div>
+    <div class="spinner-border text-warning"></div>Fast Selling
+    <div class="spinner-border text-Primary"></div>
+    <div class="spinner-border text-warning"></div>
+    <div class="spinner-border text-dark"></div>
+    <div class="spinner-border text-primary"></div>Buy Now!!
+</div>
+<hr />
+
+<!-- Section for Other Products -->
+<div class="container background">
+    <div class="row">
+        @foreach (var product in Model.RelatedProducts)
+        {
+            <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2 mb-4">
+                <a asp-controller="Home" asp-action="ProductDetails" asp-route-productId="@product.Id" class="card h-100 position-relative text-decoration-none product-card">
+                    <img src="@product.ProductImages?.FirstOrDefault()?.ImageUrl" class="card-img-top" alt="@product.ProductsModel" />
+                    <div class="card-body">
+                        <h5 class="card-title">@product.ProductsModel</h5>
+                        <p class="card-text">
+                            <strong>Specifications: </strong>@product.Specifications
+                        </p>
+                        <p class="card-text">
+                            <strong>Price: </strong>₦@product.Price?.ToString("N2")
+                        </p>
+                        <p class="card-text">
+                            <strong>Item left: </strong>@product.NumberOfItem
+                        </p>
+                    </div>
+                    <span class="stretched-link"></span>
+                </a>
+            </div>
+        }
+    </div>
+</div>
 
 
 <!-- JavaScript for Image Switching and Quantity Control -->
 <script>
-    var maxQuantity = @Model.NumberOfItem;
+    var maxQuantity = @Model.ProductDetails.NumberOfItem;
     var quantityInput = document.getElementById('quantityInput');
 
     function decreaseQuantity() {

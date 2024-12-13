@@ -19,6 +19,7 @@ namespace Logic.Helper
 
         }
 
+
         public async Task<ApplicationUser> CreateUserByAsync(ApplicationUserViewModel applicationUserViewModel)
         {
             try
@@ -62,15 +63,18 @@ namespace Logic.Helper
 
 
 
-        public ApplicationUser FindUserByEmail(string email)
+        //public ApplicationUser FindUserByEmailAsync(string email)
+        //{
+        //    var user = _userManager.Users.Where(x => x.Email == email).FirstOrDefault();
+        //    return user;
+        //}
+
+
+        public async Task<ApplicationUser> FindUserByEmailAsync(string email)
         {
-            var user = _userManager.Users.Where(x => x.Email == email).FirstOrDefault();
-            return user;
+            // Use the UserManager's built-in asynchronous method
+            return await _userManager.FindByEmailAsync(email);
         }
-
-
-
-   
 
     }
 }

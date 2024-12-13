@@ -13,7 +13,7 @@ namespace BeezNest.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ApplicationDbContext _context;
-        private readonly ICartHelper cartHelper;
+        private readonly IUserClaimsPrincipalFactory cartHelper;
         private readonly IUserHelper _userHelper;
         private readonly IAdminHelper _adminHelper;
         public CartController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, ApplicationDbContext context, IUserHelper userHelper, IAdminHelper adminHelper)

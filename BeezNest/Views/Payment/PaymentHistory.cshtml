@@ -6,9 +6,10 @@
 }
 
 <style>
-    .tableCenter {
+   /*  .tableCenter {
         margin-top: 110px;
     }
+
     table.table td h2.table-avatar {
         align-items: center;
         display: inline-flex;
@@ -40,10 +41,177 @@
         font-size: 12px;
         margin-top: 3px;
     }
+ */
+
+
+    .tableCenter {
+    margin-top: 50px;
+}
+
+.stock-card {
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f8f9fa; /* Light gray background */
+}
+
+.stock-card h2 {
+    font-size: 1rem;
+    margin: 0;
+    color: #333;
+}
+
+.stock-card span {
+    display: block;
+    font-size: 0.875rem; /* Smaller font size */
+    color: #666;
+}
+
+.stock-card a {
+    text-decoration: none;
+    color: #007bff;
+}
+
+.stock-card a:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+
+    .badge {
+        font-size: 0.875rem;
+        padding: 0.5em 0.75em;
+    }
+
+    .text-center span {
+        font-size: 0.8rem;
+        color: #555;
+    }
+
+
 
 </style>
-<h2 style="margin-top:120px;" class=" text-center">Transaction History</h2>
+<h2 style="margin-top:130px;" class=" text-center">Transaction History</h2>
 
+@if (!Model.Any())
+{
+    <p style="margin-top:100px;" class="my-5 text-center">You have not ordered from us yet</p>
+}
+else
+{
+    <div class="table-responsive tableCenter">
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Order Date</th>
+                    <th>Ordered Item/s</th>
+                    <th>Amount Paid</th>
+                    <th>Order Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.PaymentDate</td>
+                        <td>
+                            <div class="row">
+                                @foreach (var stock in order.Stocks)
+                                {
+                                    <div class="col-12 col-sm-6 col-md-4 mb-3">
+                                        <div class="stock-card border rounded p-2">
+                                            <h2 class="table-avatar">
+                                                <a href="#">
+                                                    <strong>@stock.Name</strong>
+                                                    <div>
+                                                        <span><strong>Spec:</strong> @stock.Specifications</span><br />
+                                                        <span><strong>Qty:</strong> @stock.Quantity</span><br />
+                                                        <span><strong>Price:</strong> ₦@stock.UnitPrice</span><br />
+                                                        <span><strong>Total:</strong> ₦@stock.Total</span>
+                                                    </div>
+                                                </a>
+                                            </h2>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </td>
+                        <td>₦@order.GrandTotal</td>
+                        <td>
+                            @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
+                            {
+                                <div class="text-center mt-3" role="group">
+                                    <span class="badge bg-secondary mx-2">Check back for <br />
+                                        Confirmation</span>
+                                </div>
+                            }
+                            else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
+                            {
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-success">Your Order has been <br />
+                                        Confirmed and Shipped</span> <br />
+                                    <span>Contact +112244 to keep track of your Order</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center mt-3">
+                                    <span class="badge bg-danger mx-2">Declined</span> <br />
+                                    <span>Contact +9159 for Enquiry</span>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@* 
 @if (!Model.Any())
 {
     <p style="margin-top:100px;" class="my-5 text-center">You have not ordered from us yet</p>
@@ -54,53 +222,68 @@ else
     <table class="table table-bordered tableCenter">
         <thead>
             <tr>
-       
+
                 <th>Order Date</th>
-                <th>Ordered Item/s</th>            
-                <th>Amount Paid</th>                         
-                <th>Order Status</th>                         
+                <th>Ordered Item/s</th>
+                <th>Amount Paid</th>
+                <th>Order Status</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var order in Model)
             {
                 <tr>
-                          
-                    <td>@order.PaymentDate</td>              
+
+                    <td>@order.PaymentDate</td>
                     <td>
-                        @foreach (var stock in order.Stocks)
-                        {
-                            <h2 class="table-avatar">
-                                <a href="">
-                                    @stock.Name
-                                    <span> spec:@stock.Specifications</span>
-                                    <span> Qty:@stock.Quantity</span>
-                                    <span> Price:@stock.UnitPrice</span>
-                                    <span> Total:@stock.Total</span>
-                                </a>
-                            </h2>
-                        }
+                        <div class="row">
+                            @foreach (var stock in order.Stocks)
+                            {
+                                <div class="col-6 mb-3">
+                                    <div style="border: 1px solid #ddd; padding: 10px; border-radius: 5px;">
+                                        <h2 class="table-avatar">
+                                            <a href="#">
+                                                <strong>@stock.Name</strong>
+                                                <div>
+                                                    <span><strong>Spec:</strong> @stock.Specifications</span><br />
+                                                    <span><strong>Qty:</strong> @stock.Quantity</span><br />
+                                                    <span><strong>Price:</strong> ₦@stock.UnitPrice</span><br />
+                                                    <span><strong>Total:</strong> ₦@stock.Total</span>
+                                                </div>
+                                            </a>
+                                        </h2>
+                                    </div>
+                                </div>
+                            }
+                        </div>
                     </td>
+
+
                     <td>₦@order.GrandTotal</td>
                     <td>
 
                         @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
                         {
-                            <div class="w-75 btn-group" role="group">
-                                 
+                            <div class="text-center mt-3" role="group">
+
                                 <span class="badge bg-secondary mx-2"> Check back for Confirmation</span>
                             </div>
                         }
                         else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
                         {
-                            <span class="badge bg-success">Confirmed and Shipped</span> <br />
-                            <span class="">Contact +112244 to keep track of your Order</span>
-                  
+                            <div class="text-center mt-3">
+
+                                <span class="badge bg-success">Confirmed and Shipped</span> <br />
+                                <span class="">Contact +112244 to keep track of your Order</span>
+                            </div>
                         }
                         else
                         {
-                            <span class="badge bg-danger mx-2">Declined</span> <br />
-                            <span>Contact +9159 for Enquiry</span>
+                            <div class="text-center mt-3">
+                                <span class="badge bg-danger mx-2">Declined</span> <br />
+                                <span>Contact +9159 for Enquiry</span>
+                            </div>
+
                         }
 
                     </td>
@@ -108,5 +291,5 @@ else
             }
         </tbody>
     </table>
-}
+} *@
 

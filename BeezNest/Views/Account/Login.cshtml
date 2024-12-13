@@ -1,4 +1,4 @@
-﻿@model Core.ViewModels.LoginViewModel;
+﻿@* @model Core.ViewModels.LoginViewModel;
 @{
     Layout = "~/Views/Shared/_AccountLayout.cshtml";
 }
@@ -32,6 +32,58 @@
                     <input asp-for="Password" type="password" class="form-control"  placeholder="Enter password" name="password">
                 </div>
                 
+                <button type="submit" class="btn btn-secondary w-100">Enter</button>
+            </form>
+        </div>
+    </div>
+</div> *@
+
+
+@model Core.ViewModels.LoginViewModel
+@{
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+}
+
+<style>
+    body, html {
+        height: 100%;
+    }
+
+    .centered-card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .card {
+        margin-top: 70px;
+    }
+</style>
+
+<div class="centered-card">
+    <div class="card" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="text-center">Login your account</h5>
+
+            @* Display error message if it exists *@
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger" role="alert">
+                    @TempData["ErrorMessage"]
+                </div>
+            }
+
+            <form method="post" asp-controller="Account" asp-action="Login">
+                <div class="mb-3 mt-3">
+                    <label for="email">Email:</label>
+                    <input asp-for="Email" type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+                </div>
+                <div class="mb-3">
+                    <label for="pwd">Password:</label>
+                    <input asp-for="Password" type="password" class="form-control" placeholder="Enter password" name="password">
+                </div>
+
                 <button type="submit" class="btn btn-secondary w-100">Enter</button>
             </form>
         </div>

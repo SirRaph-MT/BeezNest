@@ -54,6 +54,7 @@ else
                 <th>Amount Paid</th>
                 <th>Proof of payment</th>
                 <th>Customers Name</th>
+                <th>Customers Address</th>
                 <th>product Ordered</th>
                 <th>Status</th>
             </tr>
@@ -63,7 +64,8 @@ else
             {
                 <tr>
                     <td>@order.Id</td>
-                    <td>@order.PaymentDate</td>
+                   
+                    <td>@order.PaymentDate?.ToString("dd-MMM-yyyy")</td>
                     <td>₦@order.GrandTotal</td>
                     <td>
                         @if (!string.IsNullOrEmpty(order.ProofOfPaymentPath))
@@ -77,6 +79,9 @@ else
                     </td>
 
                     <td>@order.User</td>
+                    <td>
+                        <h3>@order.PhoneNumber</h3> <hr />
+                        @order.Address</td>
                     <td>
                         @foreach (var stock in order.Stocks)
                         {
