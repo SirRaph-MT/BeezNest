@@ -107,7 +107,8 @@ function showSidebar() {
     const sidebar = document.querySelector('.sidebar');
     sidebar.classList.toggle('show');
 }
-// Add to Cart Function
+
+
 function addToCart() {
     debugger
     const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
@@ -133,7 +134,7 @@ function addToCart() {
         UserId: userId,
     };
 
-    // Check if item already exists
+
     const existingIndex = storedCartItems.findIndex(
         item => item.UploadProductId === cartItem.UploadProductId && item.Color === cartItem.Color
     );
@@ -146,11 +147,10 @@ function addToCart() {
 
     localStorage.setItem("cart", JSON.stringify(storedCartItems));
     successAlert("Item successfully added to cart")
-    // Update badge count
+
     updateBadgeCount();
 }
 
-// Update Cart Badge Count
 function updateBadgeCount() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
     const totalItems = cart.reduce((sum, item) => sum + item.Quantity, 0);
@@ -164,10 +164,10 @@ function updateBadgeCount() {
     }
 }
 
-// Run Badge Update on Page Load
+
 window.onload = updateBadgeCount;
 
-// Display Cart Items on Icon Click
+
 document.querySelector('.iconShopping').addEventListener('click', function () {
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     const cartTableBody = document.getElementById('cartTableBody');
@@ -216,7 +216,7 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
     }
 });
 
-// Check User and Proceed to Checkout
+
 function checkUserAndProceedToCheckout() {
     const userId = $("#UserEmail").text().trim();
 
@@ -238,7 +238,7 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
             const haulageFeeField = document.getElementById('haulageFee');
             const grandTotalField = document.getElementById('grandTotal');
 
-            checkoutTableBody.innerHTML = ''; 
+            checkoutTableBody.innerHTML = '';
 
             let totalItems = 0;
             let totalPrice = 0;
@@ -263,11 +263,11 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
                 checkoutTableBody.innerHTML += row;
             });
 
-            // Calculate haulage fee and grand total
+           
             const haulageFee = parseFloat((totalPrice * 0.02).toFixed(2));
             const grandTotal = totalPrice + haulageFee;
 
-            // Update haulage fee and grand total fields
+       
             if (haulageFeeField) {
                 haulageFeeField.value = `₦${haulageFee.toLocaleString()} (2% of your total orders)`;
             }
@@ -282,7 +282,7 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
 function checkOutNow(userEmail) {
     debugger;
 
-    // Retrieve cart items from localStorage
+
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartItems.length === 0) {
         errorAlert("Your cart is empty. Add items to proceed.");
@@ -334,19 +334,17 @@ function checkOutNow(userEmail) {
         contentType: false,
         success: function (result) {
             if (!result.isError) {
-                // Clear the cart from localStorage
+                
                 localStorage.removeItem('cart');
 
-                // Notification update: Update order count on success
+                
                 if (result.orderCount !== undefined) {
                     debugger
                     const orderCountBadge = document.getElementById('orderCount');
                     if (orderCountBadge) {
-                        orderCountBadge.textContent = result.orderCount;
+                        orderCountBadge.textContent = result.orderCount++;
                     }
                 }
-
-                // Redirect or show success message
                 successAlertWithRedirect(result.msg, "/Payment/PaymentHistory");
             } else {
                 errorAlert(result.msg);
@@ -357,7 +355,6 @@ function checkOutNow(userEmail) {
         }
     });
 }
-
 
 document.getElementById('cartTableBody').addEventListener('click', function (e) {
     debugger
@@ -399,4 +396,50 @@ document.getElementById('cartTableBody').addEventListener('click', function (e) 
         }
     }
 });
+
+
+function viewProduct(paymentId, isFromAdmin) {
+    $.ajax({
+        type: 'GET',
+        url: '/Payment/GetOrderDetails',
+        dataType: "json",
+        data: {
+            paymentId: paymentId,
+            isFromAdmin: isFromAdmin
+        },
+        success: function (result) {
+            if (!result.isError) {
+                var modalOrderTableBody = $("#modalOrderTableBody");
+                modalOrderTableBody.html("");
+                var stocks = result.stock;
+
+                if (stocks && stocks.length > 0) {
+                    stocks.forEach(s => {
+                        const row = `<tr>
+                            <td>${s.name}</td>
+                            <td>${s.specifications}</td>
+                            <td>${s.quantity}</td>
+                            <td>₦${s.unitPrice}</td>
+                            <td>₦${s.total}</td>
+                        </tr>`;
+                        modalOrderTableBody.append(row);
+                    });
+                } else {
+                    modalOrderTableBody.append(`<tr><td colspan="5">No items found.</td></tr>`);
+                }
+                if (isFromAdmin) {
+                    $('#orderModal').modal('show');
+                }
+                else {
+                    $('#orderModal').modal('show');
+                }
+            } else {
+                errorAlert(result.msg); 
+            }
+        },
+        error: function () {
+            $('#validationSummary').text("Error occurred. Please try again.");
+        }
+    });
+}
 

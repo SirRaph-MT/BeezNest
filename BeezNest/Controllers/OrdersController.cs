@@ -36,25 +36,18 @@ namespace BeezNest.Controllers
                     Address = s.Client.Address,
                     PhoneNumber = s.Client.PhoneNumber,
                     ProofOfPaymentPath = s.ProofOfPaymentPath,
-                    //Stocks = JsonConvert.DeserializeObject<List<Stock>>(s.Stock),
                     Stocks = string.IsNullOrEmpty(s.Stock)
                                 ? new List<Stock>()
                                 : JsonConvert.DeserializeObject<List<Stock>>(s.Stock),
                     PaymentDate = s.PaymentDate,
                     PaymentStatus = s.PaymentStatus
-                }).ToList();
+                })
+                .OrderByDescending(x => x.PaymentDate)
+                .ToList();
             return View(payments);
 
         
         }
-
-        //var clientOrders = _context.Payments.Include(p => p.Client)
-        //                    .Where(x => x.Active)
-        //                .OrderByDescending(x => x.PaymentDate)
-        //                .ToList();
-
-        //return View(clientOrders);
- 
 
         public IActionResult Orders()
         {

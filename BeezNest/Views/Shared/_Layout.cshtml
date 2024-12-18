@@ -188,8 +188,7 @@
                          style="height: 40px; width: auto; margin-right: 10px;">
                     <span>BeezNest</span>
                 </a>
-
-                <!-- Search Bar (Desktop) -->
+              
                 <form class="input-group d-none d-sm-flex mx-3" method="post" asp-controller="Home" asp-action="Search" role="search">
                     <input name="searchString" type="text" class="form-control" placeholder="Search for a product here..."
                            aria-label="Search input" style="border-radius: 20px 0 0 20px;">
@@ -198,28 +197,27 @@
                     </button>
                 </form>
 
-                <!-- Cart Icon -->
+         
                 <button type="button" class="btn iconShopping ms-auto ms-sm-0" data-bs-toggle="modal" data-bs-target="#cartModal">
                     <i class="fa-solid fa-cart-shopping"></i>
                     <span class="cartCounterBadge">2</span>
                 </button>
 
-                <!-- Navbar Toggler -->
+        
                 <button class="navbar-toggler ms-2" type="button" data-bs-toggle="collapse"
                         data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Collapsible Navbar Content -->
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav ms-auto">
-                        <!-- Order History -->
+                
                         <li class="nav-item">
                             <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Payment" asp-action="PaymentHistory">
                                 <i class="fa-solid fa-clock me-2"></i> Order History
                             </a>
                         </li>
-                        <!-- Authentication Links -->
+               
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">

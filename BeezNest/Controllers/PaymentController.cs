@@ -3,7 +3,6 @@ using Core.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using System.Text.Json.Serialization;
 
 namespace BeezNest.Controllers
 {
@@ -19,7 +18,36 @@ namespace BeezNest.Controllers
         public IActionResult Index()
         {
             return View();
-        }  
+        }
+
+        [HttpGet]
+        public JsonResult GetOrderDetails(int paymentId, bool isFromAdmin)
+        {
+            var payments = db.Payments
+                .Where(x => x.Active)
+                .Include(x => x.Client)
+                .ToList();
+            var stocks = new List<Stock>();
+
+            if (!isFromAdmin)
+            {
+                var userPayments = payments
+                    .Where(x => x.Active && x.Client?.Email == User.Identity.Name && x.Id == paymentId)
+                    .FirstOrDefault();
+                stocks = JsonConvert.DeserializeObject<List<Stock>>(userPayments.Stock);
+            }
+            else
+            {
+                var adminPayments = payments
+                    .Where(x => x.Active && x.Id == paymentId)
+                    .FirstOrDefault();
+                stocks = JsonConvert.DeserializeObject<List<Stock>>(adminPayments.Stock);
+            }
+
+            return Json(new { isError = false, stock = stocks });
+        }
+
+
         public IActionResult PaymentHistory()
         {
             var user = User.Identity.Name;
@@ -42,93 +70,7 @@ namespace BeezNest.Controllers
             return View(payments);
         }
 
-        //[HttpPost]
-        //public JsonResult UserCheckOut(string stockDetails)
-        //{
-        //    if (string.IsNullOrEmpty(stockDetails))
-        //    {
-        //        return Json(new { isError = true, msg = "Error Occurred" });
-        //    }
-        //    var details = JsonConvert.DeserializeObject<PaymentsViewModel>(stockDetails);
-        //    if (details== null)
-        //    {
-        //        return Json(new { isError = true, msg = "Error Occurred" });
-        //    }
-        //    var clientId = db.ApplicationUsers.FirstOrDefault(x=> x.Email == details.ClientEmail)?.Id;
-        //    if (string.IsNullOrEmpty(clientId))
-        //    {
-        //        return Json(new { isError = true, msg = "Error Occurred" });
-        //    }
-        //    var payment = new Payments
-        //    {
-        //        PaymentDate = DateTime.Now,
-        //        Stock = details.StocksInString,
-        //        GrandTotal = details.GrandTotal,
-        //        ClientId = clientId,
-        //        Active  = true
-        //    };
-        //    db.Add(payment);
-        //    db.SaveChanges();
-        //    return Json(new { isError = false, msg = "Order Completed" });
-        //}
 
-        //[HttpPost]
-        //public JsonResult UserCheckOut(string stockDetails, IFormFile proofOfPayment)
-        //{
-        //    if (string.IsNullOrEmpty(stockDetails))
-        //    {
-        //        return Json(new { isError = true, msg = "Error Occurred" });
-        //    }
-
-        //    var details = JsonConvert.DeserializeObject<PaymentsViewModel>(stockDetails);
-        //    if (details == null)
-        //    {
-        //        return Json(new { isError = true, msg = "Error Occurred" });
-        //    }
-
-        //    var clientId = db.ApplicationUsers.FirstOrDefault(x => x.Email == details.ClientEmail)?.Id;
-        //    if (string.IsNullOrEmpty(clientId))
-        //    {
-        //        return Json(new { isError = true, msg = "Error Occurred" });
-        //    }
-
-        //    // Handle file upload
-        //    string proofOfPaymentPath = null;
-        //    if (proofOfPayment != null && proofOfPayment.Length > 0)
-        //    {
-        //        var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-        //        if (!Directory.Exists(uploadsFolder))
-        //        {
-        //            Directory.CreateDirectory(uploadsFolder);
-        //        }
-
-        //        var uniqueFileName = Guid.NewGuid().ToString() + "_" + proofOfPayment.FileName;
-        //        var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-        //        using (var stream = new FileStream(filePath, FileMode.Create))
-        //        {
-        //            proofOfPayment.CopyTo(stream);
-        //        }
-
-        //        proofOfPaymentPath = $"/uploads/{uniqueFileName}";
-        //    }
-
-        //    var payment = new Payments
-        //    {
-        //        PaymentDate = DateTime.Now,
-        //        Stock = details.StocksInString,
-        //        GrandTotal = details.GrandTotal,
-        //        ClientId = clientId,
-        //        Active = true,
-        //        ProofOfPaymentPath = proofOfPaymentPath, // Save the file path
-        //        PaymentStatus = PaymentStatus.Pending
-        //    };
-
-        //    db.Add(payment);
-        //    db.SaveChanges();
-
-        //    return Json(new { isError = false, msg = "Order Completed" });
-        //}
 
         [HttpPost]
         public JsonResult UserCheckOut(string stockDetails, IFormFile proofOfPayment)
@@ -178,7 +120,7 @@ namespace BeezNest.Controllers
                 GrandTotal = details.GrandTotal,
                 ClientId = clientId,
                 Active = true,
-                ProofOfPaymentPath = proofOfPaymentPath, // Save the file path
+                ProofOfPaymentPath = proofOfPaymentPath, 
                 PaymentStatus = PaymentStatus.Pending
             };
 
@@ -213,12 +155,10 @@ namespace BeezNest.Controllers
             if (paymentDetails == null || string.IsNullOrEmpty(paymentDetails.Stock))
                 return;
 
-            // Deserialize stocks from payment details
             var stocksFromPayment = JsonConvert.DeserializeObject<List<Stock>>(paymentDetails.Stock);
             if (stocksFromPayment == null || !stocksFromPayment.Any())
                 return;
-
-            // Load all relevant products in one query
+   
             var productNames = stocksFromPayment.Select(stock => stock.Name).Distinct().ToList();
             var productsInShop = db.UploadProducts.Where(p => productNames.Contains(p.ProductsModel)).ToList();
 
@@ -231,7 +171,7 @@ namespace BeezNest.Controllers
                 if (product?.NumberOfItem > 0)
                 {
                     var numberOfStockRemaining = product.NumberOfItem - stock.Quantity;
-                    product.NumberOfItem = Convert.ToInt32(numberOfStockRemaining > 0 ? numberOfStockRemaining : 0); // Ensure non-negative stock
+                    product.NumberOfItem = Convert.ToInt32(numberOfStockRemaining > 0 ? numberOfStockRemaining : 0);
                     db.UploadProducts.Update(product);
                 }
             }

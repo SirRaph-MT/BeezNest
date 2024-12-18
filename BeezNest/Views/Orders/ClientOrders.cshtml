@@ -46,7 +46,7 @@
 
 else
 {
-    <table class="table table-bordered tableCenter">
+    <table class="table table-bordered table-responsive tableCenter">
         <thead>
             <tr>
                 <th>s/n</th>
@@ -64,7 +64,7 @@ else
             {
                 <tr>
                     <td>@order.Id</td>
-                   
+
                     <td>@order.PaymentDate?.ToString("dd-MMM-yyyy")</td>
                     <td>₦@order.GrandTotal</td>
                     <td>
@@ -81,21 +81,14 @@ else
                     <td>@order.User</td>
                     <td>
                         <h3>@order.PhoneNumber</h3> <hr />
-                        @order.Address</td>
+                        @order.Address
+                    </td>
                     <td>
-                        @foreach (var stock in order.Stocks)
-                        {
-                            <h2 class="table-avatar">
-                                <a href="">
-                                    @stock.Name
-                                    <span> spec:@stock.Specifications</span>
-                                    <span> Qty:@stock.Quantity</span>
-                                    <span> Price:@stock.UnitPrice</span>
-                                    <span> Total:@stock.Total</span>
-                                </a>
-                            </h2>
-
-                        }
+                        <button type="button" class="btn btn-primary view-orders-btn"
+                                onclick="viewProduct('@order.Id', true)"
+                                data-bs-toggle="modal" data-bs-target="#orderModal">
+                            View Orders
+                        </button>
                     </td>
                     <td>
                         @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
@@ -124,3 +117,33 @@ else
         </tbody>
     </table>
 }
+
+
+<div class="modal fade" id="orderModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="orderModalLabel">Ordered Items</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Product Name</th>
+                            <th>Specification</th>
+                            <th>Quantity</th>
+                            <th>Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modalOrderTableBody">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

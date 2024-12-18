@@ -3,23 +3,21 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
-<a class="btn btn-dark float-end" asp-controller="Admin" asp-action="UploadedProducts">Back</a>
-<div class="d-flex justify-content-center align-items-center my-4">
-    <div class="border p-4 rounded" style="max-width: 900px; width: 100%;">
-        <div class="row">
-                <div class="mb-3 text-center">
-                    <img id="mainImage" src="@Model.ProductImages.FirstOrDefault()?.ImageUrl" class="img-fluid" alt="@Model.ProductsModel" style="height: 400px; object-fit: cover; border-radius: 5px;" />
-                </div>
-                <div class="d-flex justify-content-between overflow-auto">
-                    @foreach (var image in Model.ProductImages)
-                    {
-                        <img src="@image.ImageUrl" class="img-thumbnail" style="height: 75px" alt="Thumbnail" onclick="changeImage('@image.ImageUrl')" />
-                    }
-                </div>       
+
+<div class="border p-4 rounded" style="max-width: 900px; width: 100%; margin-top:120px;">
+    <div class="row">
+        <div class="mb-3 text-center">
+            <img id="mainImage" src="@Model.ProductImages.FirstOrDefault()?.ImageUrl" class="img-fluid" alt="@Model.ProductsModel" style="height: 500px; object-fit: cover; border-radius: 5px;" />
+        </div>
+        <div class="d-flex justify-content-between overflow-auto">
+            @foreach (var image in Model.ProductImages)
+            {
+                <img src="@image.ImageUrl" class="img-thumbnail" style="height: 75px" alt="Thumbnail" onclick="changeImage('@image.ImageUrl')" />
+            }
         </div>
     </div>
 </div>
-
+<a class="btn btn-dark" asp-controller="Admin" asp-action="UploadedProducts">Back</a>
 
 <script>
 

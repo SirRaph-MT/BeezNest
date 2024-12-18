@@ -132,23 +132,22 @@ namespace BeezNest.Controllers
                     foreach (var image in item.ProductImages)
                     {
                         string fileName = Guid.NewGuid().ToString() + "_" + image.FileName;
-                        var filePath = Path.Combine(uploadsFolderPath, fileName); // Full path to save the file
+                        var filePath = Path.Combine(uploadsFolderPath, fileName); 
 
                         using (var fileStream = new FileStream(filePath, FileMode.Create))
                         {
-                            image.CopyTo(fileStream); // Save the file to disk
+                            image.CopyTo(fileStream); 
                         }
 
                         var imageUrl = $"/{uploadsFolder}/{fileName}";
 
-                        // Create and add ProductImage object to UploadProduct
+                   
                         var productImage = new ProductImage
                         {
-                            ImageUrl = imageUrl, // Corrected: Save the image URL relative to the site
-                            UploadProduct = product // Associate the image with the product
+                            ImageUrl = imageUrl,
+                            UploadProduct = product 
                         };
 
-                        // Add the ProductImage to the ProductImages collection
                         product.ProductImages.Add(productImage);
                     }
                 }
@@ -161,7 +160,7 @@ namespace BeezNest.Controllers
                 return RedirectToAction("UploadedProducts");
             }
 
-            return View(item); // Reload the form if validation fails
+            return View(item); 
         }
 
         //GET - EDITDROPDOWN
