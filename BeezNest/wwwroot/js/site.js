@@ -39,27 +39,27 @@ function registration() {
     if (!data.PhoneNumber) {
         errorAlert("Phone number is required");
         return;
-    } 
+    }
     if (!data.Address) {
         errorAlert("Address is required");
         return;
     }
- 
+
     if (!data.Email) {
         errorAlert("Email is required");
         return;
     } else {
-     
+
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.Email)) {
             errorAlert("Invalid email format. Please enter a valid email.");
             return;
         }
 
-      
-        const validExtensions = ["com", "org", "net"]; 
-        const emailExtension = data.Email.split('.').pop(); 
-       
+
+        const validExtensions = ["com", "org", "net"];
+        const emailExtension = data.Email.split('.').pop();
+
         if (!validExtensions.includes(emailExtension)) {
             errorAlert(`Invalid email format. Allowed formats are: ${validExtensions.join(', ')}`);
             return;
@@ -91,7 +91,7 @@ function registration() {
             if (!result.isError) {
                 debugger
                 var url = "/Account/Login";
-                //window.location.href = "/Account/Login";
+            
                 successAlertWithRedirect(result.msg, url);
             } else {
                 errorAlert(result.msg)
@@ -109,20 +109,23 @@ function showSidebar() {
 }
 
 
+
 function addToCart() {
     debugger
-    const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const storedCartItems = JSON.parse(localStorage.getItem("cart")) || [];
 
-    const productId = $("#ProductId").val();
-    const numberOfItem = $("#numberOfItem").val();
+    // Fetch values from DOM
+    const productId = $("#productId").val();
+    const maxStock = parseInt($("#numberOfItem").text().replace("Available Items: ", "").trim()) || 0;
     const price = $("#price").text().replace("Price: ₦", "").trim();
-    const quantity = parseInt($("#quantityInput").val(), 10);
+    const quantity = parseInt($("#quantityInput").val(), 10) || 1;
     const selectedColor = $("#colorSelect").val() || "Default Color";
-    const userId = $("#Email").text() || "Guest";
     const productModel = $("#prodModel").text().replace("Product: ", "").trim();
     const specifications = $("#spec").text().replace("Specifications: ", "").trim();
     const imageUrl = $("#mainImage").attr("src");
+    const userId = $("#Email").text() || "Guest";
 
+    // Create cartItem
     const cartItem = {
         UploadProductId: productId,
         Name: productModel,
@@ -131,25 +134,47 @@ function addToCart() {
         Quantity: quantity,
         Color: selectedColor,
         ImageUrl: imageUrl,
+        MaxStock: maxStock, // Include MaxStock in the cartItem
         UserId: userId,
     };
 
-
+    // Find existing cart item for this productId and color
     const existingIndex = storedCartItems.findIndex(
         item => item.UploadProductId === cartItem.UploadProductId && item.Color === cartItem.Color
     );
 
+    let currentTotalQuantity = 0;
+
     if (existingIndex !== -1) {
-        storedCartItems[existingIndex].Quantity += cartItem.Quantity;
+        // Calculate the new total quantity if adding this quantity
+        currentTotalQuantity = storedCartItems[existingIndex].Quantity + quantity;
+
+        if (currentTotalQuantity > maxStock) {
+            errorAlert(`Only ${maxStock} items are available in stock. Current quantity in cart: ${storedCartItems[existingIndex].Quantity}`);
+            return; // Prevent adding to the cart
+        }
+
+        // Update the quantity for the existing item
+        storedCartItems[existingIndex].Quantity = currentTotalQuantity;
     } else {
+        // If new item, ensure it doesn't exceed stock
+        if (quantity > maxStock) {
+            errorAlert(`Only ${maxStock} items are available in stock.`);
+            return;
+        }
         storedCartItems.push(cartItem);
     }
 
+    // Save the updated cart back to localStorage
     localStorage.setItem("cart", JSON.stringify(storedCartItems));
-    successAlert("Item successfully added to cart")
+    successAlert("Item successfully added to cart");
 
+    // Update the cart badge
     updateBadgeCount();
 }
+
+
+
 
 function updateBadgeCount() {
     const cart = JSON.parse(localStorage.getItem('cart')) || [];
@@ -166,6 +191,7 @@ function updateBadgeCount() {
 
 
 window.onload = updateBadgeCount;
+
 
 
 document.querySelector('.iconShopping').addEventListener('click', function () {
@@ -185,6 +211,7 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
     }
 
     cartItems.forEach(item => {
+        const maxStock = parseInt(item.MaxStock) || 0; 
         const price = parseFloat(item.Price.toString().replace(/,/g, "")) || 0;
         const quantity = parseInt(item.Quantity) || 0;
         const total = price * quantity;
@@ -199,7 +226,7 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
                 <div class="d-flex align-items-center">
                     <button type="button" class="btn btn-outline-secondary decrease-quantity" data-id="${item.UploadProductId}">-</button>
                     <input type="text" id="quantity-${item.UploadProductId}" value="${quantity}" class="form-control text-center mx-2" style="width: 60px;" readonly />
-                    <button type="button" class="btn btn-outline-secondary increase-quantity" data-id="${item.UploadProductId}">+</button>
+                    <button type="button" class="btn btn-outline-secondary increase-quantity" data-id="${item.UploadProductId}" data-max="${maxStock}">+</button>
                 </div>
             </td>
             <td id="total-${item.UploadProductId}">₦${total.toLocaleString()}</td>
@@ -215,6 +242,80 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
         checkoutContainer.innerHTML = '';
     }
 });
+
+document.getElementById('cartTableBody').addEventListener('click', function (e) {
+    debugger;
+    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
+    const target = e.target;
+
+    if (target.classList.contains('decrease-quantity')) {
+        const productId = target.dataset.id;
+        const index = cartItems.findIndex(item => item.UploadProductId === productId);
+
+        if (index !== -1 && cartItems[index].Quantity > 1) {
+            cartItems[index].Quantity -= 1;
+
+            // Update localStorage
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+
+            // Update DOM for quantity and total price
+            document.getElementById(`quantity-${productId}`).value = cartItems[index].Quantity;
+            updateItemTotal(productId, cartItems[index].Price, cartItems[index].Quantity);
+
+            // Update badge count
+            updateBadgeCount();
+        }
+    } else if (target.classList.contains('increase-quantity')) {
+        const productId = target.dataset.id;
+        const maxStock = parseInt(target.dataset.max) || 0;
+        const index = cartItems.findIndex(item => item.UploadProductId === productId);
+
+        if (index !== -1) {
+            if (cartItems[index].Quantity < maxStock) {
+                cartItems[index].Quantity += 1;
+
+                // Update localStorage
+                localStorage.setItem('cart', JSON.stringify(cartItems));
+
+                // Update DOM for quantity and total price
+                document.getElementById(`quantity-${productId}`).value = cartItems[index].Quantity;
+                updateItemTotal(productId, cartItems[index].Price, cartItems[index].Quantity);
+
+                // Update badge count
+                updateBadgeCount();
+            } else {
+                errorAlert(`Only ${maxStock} items are available in stock.`);
+            }
+        }
+    } else if (target.classList.contains('remove-item')) {
+        const productId = target.dataset.id;
+        const updatedCartItems = cartItems.filter(item => item.UploadProductId !== productId);
+
+        // Update localStorage and remove the row
+        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+        updateBadgeCount();
+        target.closest('tr').remove();
+
+        if (updatedCartItems.length === 0) {
+            document.getElementById('cartTableBody').innerHTML = `
+                <tr>
+                    <td colspan="7" class="text-center">Your cart is empty</td>
+                </tr>`;
+        }
+    }
+});
+
+
+
+function updateItemTotal(productId, price, quantity) {
+    const totalPrice = parseFloat(price.toString().replace(/,/g, "")) * quantity;
+    const totalElement = document.getElementById(`total-${productId}`);
+
+    if (totalElement) {
+        totalElement.textContent = `₦${totalPrice.toLocaleString()}`;
+    }
+}
+
 
 
 function checkUserAndProceedToCheckout() {
@@ -263,11 +364,11 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
                 checkoutTableBody.innerHTML += row;
             });
 
-           
+
             const haulageFee = parseFloat((totalPrice * 0.02).toFixed(2));
             const grandTotal = totalPrice + haulageFee;
 
-       
+
             if (haulageFeeField) {
                 haulageFeeField.value = `₦${haulageFee.toLocaleString()} (2% of your total orders)`;
             }
@@ -334,10 +435,10 @@ function checkOutNow(userEmail) {
         contentType: false,
         success: function (result) {
             if (!result.isError) {
-                
+
                 localStorage.removeItem('cart');
 
-                
+
                 if (result.orderCount !== undefined) {
                     debugger
                     const orderCountBadge = document.getElementById('orderCount');
@@ -356,46 +457,7 @@ function checkOutNow(userEmail) {
     });
 }
 
-document.getElementById('cartTableBody').addEventListener('click', function (e) {
-    debugger
-    const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
-    const target = e.target;
 
-    if (target.classList.contains('decrease-quantity')) {
-        const productId = target.dataset.id;
-        const index = cartItems.findIndex(item => item.UploadProductId === productId);
-
-        if (index !== -1 && cartItems[index].Quantity > 1) {
-            cartItems[index].Quantity -= 1;
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            document.getElementById(`quantity-${productId}`).value = cartItems[index].Quantity;
-            updateBadgeCount();
-        }
-    } else if (target.classList.contains('increase-quantity')) {
-        const productId = target.dataset.id;
-        const index = cartItems.findIndex(item => item.UploadProductId === productId);
-
-        if (index !== -1) {
-            cartItems[index].Quantity += 1;
-            localStorage.setItem('cart', JSON.stringify(cartItems));
-            document.getElementById(`quantity-${productId}`).value = cartItems[index].Quantity;
-            updateBadgeCount();
-        }
-    } else if (target.classList.contains('remove-item')) {
-        const productId = target.dataset.id;
-        const updatedCartItems = cartItems.filter(item => item.UploadProductId !== productId);
-        localStorage.setItem('cart', JSON.stringify(updatedCartItems));
-        updateBadgeCount();
-        target.closest('tr').remove();
-
-        if (updatedCartItems.length === 0) {
-            document.getElementById('cartTableBody').innerHTML = `
-                <tr>
-                    <td colspan="7" class="text-center">Your cart is empty</td>
-                </tr>`;
-        }
-    }
-});
 
 
 function viewProduct(paymentId, isFromAdmin) {
@@ -434,7 +496,7 @@ function viewProduct(paymentId, isFromAdmin) {
                     $('#orderModal').modal('show');
                 }
             } else {
-                errorAlert(result.msg); 
+                errorAlert(result.msg);
             }
         },
         error: function () {

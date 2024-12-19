@@ -22,11 +22,11 @@
             </div>
 
             <div class="col-6">
-                <input id="ProductId" type="hidden" value="@Model.ProductDetails.Id" />
+                <input id="productId" type="hidden" value="@Model.ProductDetails.Id" />
                 <p id="prodModel"><strong>Product: </strong>@Model.ProductDetails.ProductsModel</p>
                 <p id="spec"><strong>Specifications: </strong>@Model.ProductDetails.Specifications</p>
                 <p id="price"><strong>Price: </strong>₦@Model.ProductDetails.Price?.ToString("N2")</p>
-                <p><strong id="numberOfItem">Available Items: </strong>@Model.ProductDetails.NumberOfItem</p>
+                <p id="numberOfItem"><strong>Available Items: </strong>@Model.ProductDetails.NumberOfItem</p>
                 <p><strong>Available Colors:</strong></p>
                 <select id="colorSelect" class="form-select mb-3">
                     @if (!string.IsNullOrEmpty(Model.ProductDetails.Colors))
@@ -100,6 +100,7 @@
 
 <!-- JavaScript for Image Switching and Quantity Control -->
 <script>
+    debugger
     var maxQuantity = @Model.ProductDetails.NumberOfItem;
     var quantityInput = document.getElementById('quantityInput');
 
