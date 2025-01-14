@@ -3,6 +3,7 @@ using Core.Db;
 using Core.Models;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
@@ -12,7 +13,10 @@ namespace BeezNest.Controllers
     {
 
         private readonly ApplicationDbContext _context;
-        
+
+        public UploadProduct uploadProduct { get; private set; }
+        public object FAQs { get; private set; }
+
         public HomeController(ApplicationDbContext context)
         {
             _context = context;
@@ -20,26 +24,27 @@ namespace BeezNest.Controllers
 
         public IActionResult Index()
         {
-            var uploadProducts = _context.UploadProducts
-                                         .Include(p => p.ProductImages)
-                                         .OrderByDescending(x => x.DateSampled)
-                                         .ToList();
+            // Fetch products and their related data
+            var products = _context.UploadProducts
+                                   .Include(p => p.ProductImages)
+                                   .OrderByDescending(p => p.DateSampled)
+                                   //.Take(12)
+                                   .ToList();
 
-            return View(uploadProducts);
+            var faqs = _context.AskedQuestions.ToList();
+
+            var viewModel = new UploadProductsViewModel
+            {
+                UploadProduct = products.FirstOrDefault(),
+                ListUploadProducts = products,
+                FAQs = faqs
+            };
+
+            return View(viewModel);
         }
 
-        //public IActionResult ProductDetails(int productId)
-        //{
-        //    var product = _context.UploadProducts
-        //        .Include(p => p.ProductImages)
-        //        .FirstOrDefault(p => p.Id == productId);
 
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return View(product);
-        //}
+
 
         public IActionResult ProductDetails(int productId)
         {
@@ -53,11 +58,11 @@ namespace BeezNest.Controllers
                 return NotFound();
             }
 
-            // Fetch related products (excluding the current product)
+            
             var relatedProducts = _context.UploadProducts
                 .Include(p => p.ProductImages)
-                .Where(p => p.Id != productId) // Exclude the main product
-                .Take(6) // Adjust the number as needed
+                .Where(p => p.Id != productId) 
+                .Take(12) 
                 .ToList();
 
             // Create and populate the view model
@@ -89,6 +94,8 @@ namespace BeezNest.Controllers
 
             return View("SearchResults", filteredProducts);
         }
+
+
 
         public IActionResult Privacy()
         {

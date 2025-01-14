@@ -3,6 +3,60 @@
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
 
+<style>
+    .interactive-img {
+        transition: transform 0.2s;
+    }
+
+        .interactive-img:hover {
+            transform: scale(1.1);
+        }
+
+    /* Modal Style */
+    .modal-content {
+        max-width: 80%;
+        margin: auto;
+        background-color: #fff;
+        border-radius: 10px;
+    }
+
+    .modal-header {
+        background-color: #007bff;
+        color: white;
+        text-align: center;
+        font-size: 1.25rem;
+    }
+
+    .modal-body {
+        font-size: 1rem;
+        color: #333;
+        padding: 20px;
+        background-color: #f9f9f9;
+    }
+
+    .modal-footer {
+        background-color: #f1f1f1;
+        text-align: right;
+    }
+
+    /* Optional: Add a shadow effect */
+    .modal-dialog {
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Button Style */
+    .btn-info {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+
+        .btn-info:hover {
+            background-color: #0056b3;
+            border-color: #004085;
+        }
+</style>
+
 <div class="container p-3">
     <div class="row pt-4">
         <div class="col-md-6 col-sm-12">
@@ -30,6 +84,7 @@ else
                     <th>Price</th>
                     <th>Specifications</th>
                     <th>Product Images</th>
+                    <th>Descriptions</th>
                     <th>Number of Items</th>
                     <th>Date Sampled</th>
                     <th>Actions</th>
@@ -47,13 +102,19 @@ else
                             <td></td>
                         }
                         else
-                        {                    
+                        {
                             <td>
                                 <a asp-controller="Admin" asp-action="UploadedImages" asp-route-productId="@product.Id" style="color: inherit;">
-                                    <img src="@product.UploadedImage" class="img-fluid" width="100" />
+                                    <img src="@product.UploadedImage" class="img-fluid interactive-img" width="100" style="cursor: pointer;" />
                                 </a>
-                            </td>                    
+                            </td>
                         }
+                        <!-- Description Button -->
+                        <td>
+                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#descriptionModal-@product.Id">
+                                View Description
+                            </button>
+                        </td>
                         <td>@product.NumberOfItem</td>
                         <td>@product.DateSampled?.ToString("dd-MMM-yyyy")</td>
                         <td>
@@ -67,11 +128,32 @@ else
                             </div>
                         </td>
                     </tr>
+
+                    <!-- Modal for Description -->
+                    <div class="modal fade" id="descriptionModal-@product.Id" tabindex="-1" aria-labelledby="descriptionModalLabel-@product.Id" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="descriptionModalLabel-@product.Id">Product Description</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <p>@product.Description</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 }
             </tbody>
         </table>
     </div>
 }
+
+
+
 
 <link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet" />
 
@@ -93,111 +175,3 @@ else
     </script>
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@* @model IEnumerable<Core.ViewModels.UploadProductViewModel>
-@{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-}
-
-<div class="container p-3">
-    <div class="row pt-4">
-        <div class="col-6">
-            <h2 class="text-primary">All Products</h2>
-        </div>
-        <div class="col-6 text-end">
-            <a asp-controller="Admin" asp-action="CreateProduct" class="btn btn-primary">
-                <i class="fa-solid fa-plus"></i> &nbsp; Add New Products
-            </a>
-        </div>
-    </div>
-</div>
-
-@if (!Model.Any())
-{
-    <h5 style="margin-top:100px;" class="my-5 text-center">No products uploaded yet</h5>
-}
-else
-{
-    <table id="Productstable" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Product Model</th>
-                <th>Price</th>
-                <th>Specifications</th>
-                <th>Product Images</th> 
-                <th>Number of Items</th>
-                <th>Date Sampled</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model)
-            {
-                <tr>
-                    <td>@product.ProductsModel</td>
-                    <td>₦@(product.Price.HasValue ? product.Price.Value.ToString("N2") : "#0.00")</td>
-                    <td>@product.Specifications</td>
-                    @if (string.IsNullOrEmpty(product.UploadedImage))
-                    {
-                        <td></td>
-                    }else{                    
-                        <td>
-                            <a asp-controller="Admin" asp-action="UploadedImages" asp-route-productId="@product.Id" style="color: inherit;">
-                                <img src="@product.UploadedImage" width="100" style="margin-right: 5px;" />
-                            </a>
-                        </td>                    
-                    }
-                    <td>@product.NumberOfItem</td>
-                    <td>@product.DateSampled?.ToString("dd-MMM-yyyy")</td>
-                    <td>
-                        <div class="w-75 btn-group" role="group">
-                            <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="EditProduct" class="btn btn-primary mx-2">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="DeleteProduct" class="btn btn-danger mx-2">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-
-<link href="//cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css" rel="stylesheet" />
-
-@section script {
-    <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-
-    <script>
-        $(document).ready(function () {
-            $('#Productstable').DataTable({
-                "paging": true,
-                "pageLength": 5,
-                "lengthMenu": [5, 10, 25, 50],
-                "searching": true,
-                "ordering": true,
-                "info": true
-            });
-        });
-    </script>
-
-}
-
- *@

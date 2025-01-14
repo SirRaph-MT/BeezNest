@@ -1,0 +1,97 @@
+﻿@model IEnumerable<Core.Models.AskedQuestions>
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container p-3 mt-5">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Dropdown List</h2>
+        </div>
+        <div class="col-6 text-end">
+            <a asp-controller="Questions" asp-action="CreateQuestions" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> &nbsp; Add New Questions
+            </a>
+        </div>
+    </div>
+</div>
+
+<br />
+<br />
+
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var data in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title text-primary">Question</h5>
+                        <div class="mb-3 overflow-hidden" style="max-height: 100px;">
+                            <p class="card-text">@data.Questions</p>
+                        </div>
+                        <h6 class="text-secondary">Answer</h6>
+                        <div class="mb-3 overflow-hidden" style="max-height: 100px;">
+                            <p class="card-text">@data.Answers</p>
+                        </div>
+                        <div class="text-end">
+                            <a href="#" class="btn btn-link p-0 text-primary read-more" data-bs-toggle="modal" data-bs-target="#readMoreModal"
+                               data-question="@data.Questions" data-answer="@data.Answers">Read More</a>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a asp-controller="Admin" asp-route-id="@data.Id" asp-action="EditDropdown" class="btn btn-primary mx-2">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a asp-controller="Admin" asp-route-id="@data.Id" asp-action="DeleteDropdown" class="btn btn-danger mx-2">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Modal for Read More -->
+    <div class="modal fade" id="readMoreModal" tabindex="-1" aria-labelledby="readMoreModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="readMoreModalLabel">Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h5 class="text-primary">Question</h5>
+                    <p id="modalQuestion"></p>
+                    <h6 class="text-secondary">Answer</h6>
+                    <p id="modalAnswer"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <p>No Question Exists</p>
+}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('readMoreModal');
+        const questionElement = document.getElementById('modalQuestion');
+        const answerElement = document.getElementById('modalAnswer');
+
+        modal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const question = button.getAttribute('data-question');
+            const answer = button.getAttribute('data-answer');
+
+            questionElement.textContent = question;
+            answerElement.textContent = answer;
+        });
+    });
+</script>

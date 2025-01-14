@@ -110,22 +110,38 @@ function showSidebar() {
 
 
 
-function addToCart() {
+function addToCart(button) {
     debugger
     const storedCartItems = JSON.parse(localStorage.getItem("cart")) || [];
 
-    // Fetch values from DOM
-    const productId = $("#productId").val();
-    const maxStock = parseInt($("#numberOfItem").text().replace("Available Items: ", "").trim()) || 0;
-    const price = $("#price").text().replace("Price: ₦", "").trim();
-    const quantity = parseInt($("#quantityInput").val(), 10) || 1;
-    const selectedColor = $("#colorSelect").val() || "Default Color";
-    const productModel = $("#prodModel").text().replace("Product: ", "").trim();
-    const specifications = $("#spec").text().replace("Specifications: ", "").trim();
-    const imageUrl = $("#mainImage").attr("src");
-    const userId = $("#Email").text() || "Guest";
+    let productCard, productId, maxStock, price, quantity, productModel, specifications, imageUrl, userId, selectedColor;
 
-    // Create cartItem
+    if (button) {
+        // Home page context
+        productCard = button.closest(".col-12");
+        productId = productCard.querySelector(".productId").value;
+        maxStock = parseInt(productCard.querySelector(".numberOfItem").textContent.replace("Item left: ", "").trim()) || 0;
+        price = productCard.querySelector(".price").textContent.replace("Price: ₦", "").trim();
+        quantity = parseInt(productCard.querySelector(".quantityInput").value, 10) || 1;
+        productModel = productCard.querySelector(".card-title").textContent.trim();
+        specifications = productCard.querySelector(".specifications").textContent.replace("Specifications: ", "").trim();
+        imageUrl = productCard.querySelector(".card-img-top").src || "default_image_url";
+        selectedColor = "No Color Selected"; // Default color for homepage items
+    } else {
+        // Product details page context
+        productId = document.querySelector("#productId").value;
+        maxStock = parseInt(document.querySelector("#numberOfItem").textContent.replace("Available Items: ", "").trim()) || 0;
+        price = document.querySelector("#price").textContent.replace("Price: ₦", "").trim();
+        quantity = parseInt(document.querySelector("#quantityInput").value, 10) || 1;
+        productModel = document.querySelector("#prodModel").textContent.replace("Product: ", "").trim();
+        specifications = document.querySelector("#spec").textContent.replace("Specifications: ", "").trim();
+        imageUrl = document.querySelector("#mainImage").src || "default_image_url";
+        selectedColor = document.querySelector("#colorSelect")?.value || "No Color Selected"; // Allow color selection
+    }
+
+    userId = document.querySelector("#Email")?.textContent.trim() || "Guest";
+
+    // Create a standardized cartItem
     const cartItem = {
         UploadProductId: productId,
         Name: productModel,
@@ -134,11 +150,11 @@ function addToCart() {
         Quantity: quantity,
         Color: selectedColor,
         ImageUrl: imageUrl,
-        MaxStock: maxStock, // Include MaxStock in the cartItem
+        MaxStock: maxStock,
         UserId: userId,
     };
 
-    // Find existing cart item for this productId and color
+    // Check if the product with the same ID and color already exists in the cart
     const existingIndex = storedCartItems.findIndex(
         item => item.UploadProductId === cartItem.UploadProductId && item.Color === cartItem.Color
     );
@@ -146,18 +162,17 @@ function addToCart() {
     let currentTotalQuantity = 0;
 
     if (existingIndex !== -1) {
-        // Calculate the new total quantity if adding this quantity
+        // If the product exists, update the quantity
         currentTotalQuantity = storedCartItems[existingIndex].Quantity + quantity;
 
         if (currentTotalQuantity > maxStock) {
             errorAlert(`Only ${maxStock} items are available in stock. Current quantity in cart: ${storedCartItems[existingIndex].Quantity}`);
-            return; // Prevent adding to the cart
+            return;
         }
 
-        // Update the quantity for the existing item
         storedCartItems[existingIndex].Quantity = currentTotalQuantity;
     } else {
-        // If new item, ensure it doesn't exceed stock
+        // If the product does not exist, check stock and add it
         if (quantity > maxStock) {
             errorAlert(`Only ${maxStock} items are available in stock.`);
             return;
@@ -172,6 +187,7 @@ function addToCart() {
     // Update the cart badge
     updateBadgeCount();
 }
+
 
 
 

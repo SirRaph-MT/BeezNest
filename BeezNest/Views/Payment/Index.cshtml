@@ -1,46 +1,4 @@
 ﻿
-@* @{
-    Layout = "~/Views/Shared/_UserLayout.cshtml";
-    ViewData["Title"] = "Index";
-}
-
-
-<style>
-    body, html {
-        height: 100%;
-    }
-
-    .centered-card {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-    }
-    .card{
-        margin-top: 130px;
-    }
-</style>
-<div class="centered-card">
-    <div class="card" style="width: 30rem;">
-        <div class="card-body">
-            <h5 class="text-center">Make Transfer to the below Details</h5>
-            <p><strong>Bank:</strong>Palmpay</p>
-            <p><strong>Account Number:</strong>9550118384</p>
-            <p><strong>Account Name:</strong>BeezNest E-space</p>
-        </div>
-        <form id="checkoutForm" enctype="multipart/form-data">
-            <label class="col-md-4 col-form-label">Upload Evidence of Payment Below</label>
-            <div class="col-md-8">
-                <input type="file" class="form-control w-100" name="proofOfPayment" accept="image/*" />
-                <div class="col pt-3">
-                    <a class="btn btn-dark text-center" onclick="checkOutNow('@User.Identity.Name')">Submit</a>
-                </div>
-            </div>
-        </form>
-
-    </div>
-</div>
- *@
 @{
     Layout = "~/Views/Shared/_UserLayout.cshtml";
     ViewData["Title"] = "Index";

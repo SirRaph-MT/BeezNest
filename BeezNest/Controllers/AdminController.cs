@@ -45,19 +45,6 @@ namespace BeezNest.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult UploadedProduct()
-        {
-            
-            var productList = _db.UploadProducts
-                .Select(product => new
-                {
-                    Product = product,
-                    Images = _db.ProductImages.Where(pi => pi.UploadProductId == product.Id).ToList()
-                })
-                .ToList();
-
-            return View(productList);
-        }
 
         [HttpGet]
         public IActionResult UploadedProducts()
@@ -87,7 +74,7 @@ namespace BeezNest.Controllers
                 uploadProductModel.NumberOfItem = product.NumberOfItem;
                 uploadProductModel.DateSampled = product.DateSampled;
                 uploadProductModel.Colors = product.Colors;
-               
+                uploadProductModel.Description = product.Description;
                 uploadProductViewModels.Add(uploadProductModel);
             };
             return View(uploadProductViewModels);
@@ -115,6 +102,7 @@ namespace BeezNest.Controllers
                     NumberOfItem = item.NumberOfItem,
                     DateSampled = DateTime.Now,
                     Colors = item.Colors,
+                    Description = item.Description,
                     ProductImages = new List<ProductImage>() 
                 };
 
@@ -152,8 +140,6 @@ namespace BeezNest.Controllers
                     }
                 }
 
-
-                // Save the product and the images
                 _db.UploadProducts.Add(product);
                 _db.SaveChanges(); 
 
@@ -171,6 +157,7 @@ namespace BeezNest.Controllers
             {
                 return NotFound();
             }
+
             var data = _db.DropdownModels.Find(Id);
             if (data == null)
             {
@@ -239,6 +226,7 @@ namespace BeezNest.Controllers
         [HttpPost]
         public IActionResult EditProduct(UploadProduct data)
         {
+            data.DateSampled = DateTime.Now;
             _db.UploadProducts.Update(data);
             _db.SaveChanges();
             return RedirectToAction("UploadedProducts");

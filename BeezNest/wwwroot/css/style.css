@@ -27,36 +27,27 @@
 
 @media (max-width: 768px) {
     .modal-dialog {
-        max-width: 90% !important; /* Adjust width for smaller screens */
-        margin: 2rem auto !important; /* Reduce vertical margin */
+        max-width: 90% !important; 
+        margin: 2rem auto !important; 
     }
 
     .modal-body {
-        padding: 1rem; /* Adjust padding for better mobile fit */
+        padding: 1rem; 
     }
 
     table.table {
-        font-size: 0.8rem; /* Smaller font size for table content */
+        font-size: 0.8rem;
     }
 
     th, td {
-        white-space: nowrap; /* Prevent table content from overflowing */
-    }
-/*
-    #cartTableBody tr {
-        display: block;  Stack rows on small screens 
-        margin-bottom: 1rem;
+        white-space: nowrap; 
     }
 
-        #cartTableBody tr td, #cartTableBody tr th {
-            display: block;
-            text-align: left;
-        }*/
 }
 
 
     .page-wrapper {
-        margin-left: 100px;
+        margin-left: 60px;
         margin-top: 75px;
     }
 

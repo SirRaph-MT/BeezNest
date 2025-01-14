@@ -23,6 +23,7 @@ namespace Core.Db
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Payments> Payments { get; set; }
+        public DbSet<AskedQuestions> AskedQuestions { get; set; }
 
     }
 }
