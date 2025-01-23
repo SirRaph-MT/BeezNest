@@ -45,35 +45,64 @@ namespace BeezNest.Controllers
 
 
 
-
         public IActionResult ProductDetails(int productId)
         {
-            // Fetch the main product details
             var product = _context.UploadProducts
-                .Include(p => p.ProductImages)
+                .Include(p => p.ProductImages) 
+                .Include(p => p.Ratings) 
                 .FirstOrDefault(p => p.Id == productId);
 
+           
             if (product == null)
             {
-                return NotFound();
+                return NotFound(); 
             }
 
             
             var relatedProducts = _context.UploadProducts
-                .Include(p => p.ProductImages)
                 .Where(p => p.Id != productId) 
+                .Include(p => p.ProductImages)
                 .Take(12) 
                 .ToList();
 
-            // Create and populate the view model
+          
+            var averageRating = product.Ratings?.Any() == true
+                ? product.Ratings.Average(r => r.RatingValue) 
+                : 0.0; 
+
+            var totalRatings = product.Ratings?.Count ?? 0; 
+
+           
             var viewModel = new ProductDetailsViewModel
             {
-                ProductDetails = product,
-                RelatedProducts = relatedProducts
+                ProductDetails = product, 
+                RelatedProducts = relatedProducts, 
+                AverageRating = Math.Round(averageRating, 1), 
+                TotalRatings = totalRatings,
+                Ratings = product.Ratings 
             };
 
-            // Pass the view model to the view
             return View(viewModel);
+        }
+
+
+        public IActionResult ProductRatingsAndReviews(int productId)
+        {
+            var product = _context.UploadProducts
+                .Include(p => p.Ratings)
+                .ThenInclude(r => r.Client) 
+                .FirstOrDefault(p => p.Id == productId);
+
+            if (product == null)
+            {
+                return RedirectToAction("ProductNotFound");
+            }
+
+            ViewData["ProductName"] = product.ProductsModel ?? "Unnamed Product";
+            ViewData["ProductId"] = product.Id;
+
+            var raters = product.Ratings?.ToList() ?? new List<Rating>();
+            return View(raters);
         }
 
 

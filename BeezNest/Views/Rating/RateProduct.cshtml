@@ -1,0 +1,26 @@
+﻿@model Core.ViewModels.RatingViewModel
+
+<h2>Rate Product - @Model.ProductName</h2>
+
+<form asp-action="SubmitRating" method="post">
+    @Html.HiddenFor(m => m.ProductId)
+
+    <div class="mb-3">
+        <label asp-for="RatingValue" class="form-label">Your Rating (1-5)</label>
+        <select asp-for="RatingValue" class="form-select" required>
+            <option value="">Select a rating</option>
+            @for (int i = 1; i <= 5; i++)
+            {
+                <option value="@i">@i Star(s)</option>
+            }
+        </select>
+        <span asp-validation-for="RatingValue" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ReviewComment" class="form-label">Comments (optional)</label>
+        <textarea asp-for="ReviewComment" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Rating</button>
+</form>

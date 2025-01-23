@@ -61,20 +61,15 @@ namespace Logic.Helper
             }
         }
 
-
-
-        //public ApplicationUser FindUserByEmailAsync(string email)
-        //{
-        //    var user = _userManager.Users.Where(x => x.Email == email).FirstOrDefault();
-        //    return user;
-        //}
-
-
         public async Task<ApplicationUser> FindUserByEmailAsync(string email)
         {
             // Use the UserManager's built-in asynchronous method
             return await _userManager.FindByEmailAsync(email);
         }
 
+        public async Task<ApplicationUser> FindUserByUsername(string username)
+        {            
+            return await _userManager.FindByNameAsync(username);
+        }
     }
 }

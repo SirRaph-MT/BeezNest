@@ -1,5 +1,5 @@
-﻿@model Core.ViewModels.ProductDetailsViewModel
-
+﻿
+@model Core.ViewModels.ProductDetailsViewModel
 
 @{
     Layout = "~/Views/Shared/_UserLayout.cshtml";
@@ -49,6 +49,39 @@
                     }
                 </select>
 
+                <!-- Rating Section -->
+                <div class="mt-4">
+                    <h5>
+                        Average Rating:
+                        <span class="text-warning">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= Math.Floor(Model.AverageRating))
+                                {
+                                    <i class="fas fa-star"></i> <!-- Full star -->
+                                }
+                                else if (i - Model.AverageRating < 1)
+                                {
+                                    <i class="fas fa-star-half-alt"></i> <!-- Half star -->
+                                }
+                                else
+                                {
+                                    <i class="far fa-star"></i> <!-- Empty star -->
+                                }
+                            }
+                        </span> (@Model.AverageRating.ToString("N1")/5)
+                    </h5>
+                    <p>
+                        Rated by @Model.TotalRatings users (<a href="@Url.Action("ProductRatingsAndReviews", "Home", new { productId = Model.ProductDetails.Id })">
+                            View Ratings and Reviews
+                        </a>)
+                    </p>
+                </div>
+
+                <div class="mt-3">                                    
+                    <button class="btn btn-primary mt-2" data-bs-toggle="modal" data-bs-target="#ratingModal">Rate This Product</button>
+                </div>
+
                 <!-- Description Section -->
                 <div class="mt-4">
                     <h5 class="fw-bold text-primary">Product Description</h5>
@@ -73,20 +106,8 @@
     </div>
 </div>
 
-
 <hr />
-<div class="p-2 border-2 text-center h2">
-    <div class="spinner-border text-dark"></div>
-    <div class="spinner-border text-primary"></div>
-    <div class="spinner-border text-warning"></div>High In Demands
-    <div class="spinner-border text-dark"></div>
-    <div class="spinner-border text-primary"></div>
-    <div class="spinner-border text-warning"></div>Fast Selling
-    <div class="spinner-border text-Primary"></div>
-    <div class="spinner-border text-warning"></div>
-    <div class="spinner-border text-dark"></div>
-    <div class="spinner-border text-primary"></div>Buy Now!!
-</div>
+
 <hr />
 
 <!-- Section for Other Products -->
@@ -116,9 +137,42 @@
     </div>
 </div>
 
+<!-- Rating Modal -->
+<div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ratingModalLabel">Rate This Product</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <h6>Give Your Rating:</h6>
+                <div id="modalRatingStars" class="d-flex">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <i class="far fa-star" onclick="setModalRating(@i)" style="cursor: pointer;"></i>
+                    }
+                </div>
+                <input type="hidden" id="modalRatingValue" value="0" />
 
-<!-- JavaScript for Image Switching and Quantity Control -->
+                <div class="mt-3">
+                    <label for="reviewText" class="form-label">Add a Review (Optional):</label>
+                    <textarea class="form-control" id="reviewText" rows="3" placeholder="Share your thoughts about the product..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="submitModalRating()">Submit Rating</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- JavaScript -->
+
 <script>
+   
     var maxQuantity = @Model.ProductDetails.NumberOfItem;
     var quantityInput = document.getElementById('quantityInput');
     debugger

@@ -521,3 +521,82 @@ function viewProduct(paymentId, isFromAdmin) {
     });
 }
 
+
+
+function updateStars(averageRating) {
+    const ratingStarsContainer = document.getElementById("ratingStars");
+
+   
+    let starsHtml = "";
+    for (let i = 1; i <= 5; i++) {
+        if (i <= Math.floor(averageRating)) {
+            starsHtml += '<i class="fas fa-star text-warning"></i>'; 
+        } else if (i - averageRating < 1) {
+            starsHtml += '<i class="fas fa-star-half-alt text-warning"></i>'; 
+        } else {
+            starsHtml += '<i class="far fa-star text-warning"></i>'; 
+        }
+    }
+
+   
+    ratingStarsContainer.innerHTML = starsHtml;
+}
+
+function setModalRating(rating) {
+    const stars = document.querySelectorAll("#modalRatingStars i");
+    stars.forEach((star, index) => {
+        star.className = index < rating ? "fas fa-star" : "far fa-star";
+    });
+    document.getElementById("modalRatingValue").value = rating; 
+}
+
+// Submit the rating and review
+function submitModalRating() {
+    const productId = document.getElementById("productId").value;
+    const rating = document.getElementById("modalRatingValue").value;
+    const review = document.getElementById("reviewText").value;
+
+    if (!rating || rating < 1 || rating > 5) {
+        errorAlert("Please select a valid rating before submitting.");
+        return;
+    }
+
+    // Prepare the data to send
+    const data = {
+        productId: productId,
+        rating: parseInt(rating),
+        review: review
+    };
+
+    // Send the rating to the server
+    fetch('/Rating/SubmitRating', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Failed to submit rating');
+            }
+        })
+        .then(result => {
+            successAlert('Thank you for your feedback!');
+            // Optionally update the average rating and reviews dynamically
+            updateStars(result.newAverageRating);
+            document.getElementById("totalRatings").innerText = `Rated by ${result.totalRatings} users`;
+            document.getElementById("reviewText").value = ""; // Clear the review text
+            document.querySelectorAll("#modalRatingStars i").forEach(star => star.className = "far fa-star"); // Reset stars
+            document.getElementById("modalRatingValue").value = "0"; // Reset rating
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById("ratingModal"));
+            modal.hide();
+        })
+        .catch(error => {
+            errorAlert('Failed.You can only rate products you have purchased');
+            console.error('Error:', error);
+        });
+}

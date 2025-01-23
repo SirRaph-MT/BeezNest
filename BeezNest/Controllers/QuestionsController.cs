@@ -35,5 +35,61 @@ namespace BeezNest.Controllers
             }
             return RedirectToAction("Index");
         }
+
+
+        [HttpGet]
+        public IActionResult EditQuestions(int? Id)
+        {
+            if (Id == null)
+            {
+                return NotFound();
+            }
+
+            var data = _db.AskedQuestions.Find(Id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            return View(data);
+        }
+
+      
+        [HttpPost]
+        public IActionResult EditQuestions(AskedQuestions data)
+        {
+            _db.AskedQuestions.Update(data);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        //GET - DELETQUESTION
+        [HttpGet]
+        public IActionResult DeleteQuestions(int? Id)
+        {
+            if (Id == null)
+            {
+                return NotFound();
+            }
+            var data = _db.AskedQuestions.Find(Id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            return View(data);
+        }
+
+        //POST - DeleteQUESTION
+        [HttpPost]
+        public IActionResult DeleteQuestion(int? Id)
+        {
+            var data = _db.AskedQuestions.Find(Id);
+            if (data == null)
+            {
+                return NotFound();
+            }
+            _db.AskedQuestions.Remove(data);
+            _db.SaveChanges();
+            return RedirectToAction("Index");
+        }
     }
 }

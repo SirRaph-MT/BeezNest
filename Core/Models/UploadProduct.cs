@@ -23,5 +23,8 @@ namespace Core.Models
         public virtual ICollection<ProductImage>? ProductImages { get; set; }
         public string? Colors { get; set; }
         public string? Description { get; set; }
+
+        public virtual ICollection<Rating>? Ratings { get; set; }
+
     }
 }

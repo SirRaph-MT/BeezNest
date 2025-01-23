@@ -4,6 +4,7 @@ using Core.Db;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250115145315_ratingTable")]
+    partial class ratingTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -206,9 +209,6 @@ namespace Core.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("AverageRating")
-                        .HasColumnType("float");
-
                     b.Property<string>("Colors")
                         .HasColumnType("nvarchar(max)");
 
@@ -229,9 +229,6 @@ namespace Core.Migrations
 
                     b.Property<string>("Specifications")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TotalRatings")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -519,7 +516,7 @@ namespace Core.Migrations
                         .IsRequired();
 
                     b.HasOne("Core.Models.UploadProduct", "Product")
-                        .WithMany("Ratings")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -583,8 +580,6 @@ namespace Core.Migrations
             modelBuilder.Entity("Core.Models.UploadProduct", b =>
                 {
                     b.Navigation("ProductImages");
-
-                    b.Navigation("Ratings");
                 });
 #pragma warning restore 612, 618
         }

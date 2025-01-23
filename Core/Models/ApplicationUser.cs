@@ -9,6 +9,7 @@ namespace Core.Models
         { 
             Active = true;
             DateCreated = DateTime.Now;
+            
         }
 
         public string? FirstName { get; set; }
@@ -19,6 +20,9 @@ namespace Core.Models
        
         [NotMapped]
         public string? Role { get; set; }
+
+        [NotMapped]
+        public string? FullName => $"{FirstName} {LastName}";
 
     }
 

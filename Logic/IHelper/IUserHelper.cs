@@ -16,5 +16,6 @@ namespace Logic.IHelper
         //ApplicationUser FindUserByEmailAsync(string email);
 
         Task<ApplicationUser> FindUserByEmailAsync(string email);
+        Task<ApplicationUser> FindUserByUsername(string username);
     }
 }

@@ -24,6 +24,8 @@ namespace Core.Db
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Payments> Payments { get; set; }
         public DbSet<AskedQuestions> AskedQuestions { get; set; }
+        public DbSet<Rating> Ratings { get; set; }
+
 
     }
 }
