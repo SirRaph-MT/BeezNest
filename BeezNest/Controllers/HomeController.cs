@@ -24,7 +24,13 @@ namespace BeezNest.Controllers
 
         public IActionResult Index()
         {
-            // Fetch products and their related data
+            
+            var userId = _context.Users
+                                 .Where(u => u.Email == User.Identity.Name) 
+                                 .Select(u => u.Id)
+                                 .FirstOrDefault();
+            ViewBag.UserId = userId;
+            
             var products = _context.UploadProducts
                                    .Include(p => p.ProductImages)
                                    .OrderByDescending(p => p.DateSampled)
@@ -47,6 +53,12 @@ namespace BeezNest.Controllers
 
         public IActionResult ProductDetails(int productId)
         {
+            var userId = _context.Users
+                                .Where(u => u.Email == User.Identity.Name)
+                                .Select(u => u.Id)
+                                .FirstOrDefault();
+            ViewBag.UserId = userId;
+
             var product = _context.UploadProducts
                 .Include(p => p.ProductImages) 
                 .Include(p => p.Ratings) 

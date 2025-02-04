@@ -11,6 +11,8 @@ namespace Core.ViewModels
     public class ApplicationUserViewModel
     {
 
+        public string? Id { get; set; }
+
         [Required(ErrorMessage = "Firstname is required.")]
         [StringLength(20, ErrorMessage = "Firstname must not exceed 20 characters.")]
         public string? FirstName { get; set; }

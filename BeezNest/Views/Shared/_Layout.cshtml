@@ -62,6 +62,20 @@
             max-width:1515px !important;
         }
 
+        .dropdown-menu {
+            min-width: 180px;
+        }
+
+            .dropdown-menu .dropdown-item {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+                .dropdown-menu .dropdown-item i {
+                    font-size: 16px;
+                }
+
+
     </style>
 
     <script>
@@ -198,39 +212,49 @@
 
                 <div class="collapse navbar-collapse" id="navbarContent">
                     <ul class="navbar-nav ms-auto">
-                
-                        <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Payment" asp-action="PaymentHistory">
-                                <i class="fa-solid fa-clock me-2"></i> Order History
-                            </a>
-                        </li>
-               
                         @if (User.Identity.IsAuthenticated)
                         {
-                            <li class="nav-item">
-                                <span class="nav-link d-flex align-items-center">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     <i class="fa-solid fa-user me-2"></i>
-                                    Welcome @User.Claims.FirstOrDefault(c => c.Type == "FirstName")?.Value &nbsp;
-                                    <a asp-controller="Account" asp-action="LogOut" class="ms-3 text-danger">LogOut</a>
-                                </span>
+                                    @User.Claims.FirstOrDefault(c => c.Type == "FirstName")?.Value
+                                    <i class="fa-solid fa-chevron-down ms-2"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" asp-controller="Account" asp-action="Profile">
+                                            <i class="fa-solid fa-user me-2"></i> My Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center" asp-controller="Payment" asp-action="PaymentHistory">
+                                            <i class="fa-solid fa-clock me-2"></i> Order History
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center text-danger" asp-controller="Account" asp-action="LogOut">
+                                            <i class="fa-solid fa-sign-out-alt me-2"></i> Logout
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
                         }
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Account" asp-action="Login">
+                                <a class="nav-link d-flex align-items-center" asp-controller="Account" asp-action="Login">
                                     <i class="fa-solid fa-sign-in-alt me-2"></i> Login
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Account" asp-action="Registration">
+                                <a class="nav-link d-flex align-items-center" asp-controller="Account" asp-action="Registration">
                                     <i class="fa-solid fa-user-plus me-2"></i> Register
                                 </a>
                             </li>
                         }
                     </ul>
                 </div>
-            </div>
 
             <!-- Search Bar (Mobile) -->
             <form class="input-group d-sm-none px-3 mt-2" method="post" asp-controller="Home" asp-action="Search" role="search">
@@ -337,7 +361,10 @@
 
             <!-- Modal footer -->
             <div class="modal-footer">
-                <a class="btn btn-dark text-center" asp-controller="Payment" asp-action="Index">Pay Now</a>
+                    @if (ViewBag.UserId != null)
+                    {
+                        <a class="btn btn-dark text-center" asp-controller="Payment" asp-action="Index" asp-route-id="@ViewBag.UserId">Pay Now</a>
+                    }
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
             </div>
 

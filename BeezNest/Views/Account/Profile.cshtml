@@ -1,0 +1,49 @@
+﻿@model Core.ViewModels.ApplicationUserViewModel
+
+@{
+    Layout = "~/Views/Shared/_UserLayout.cshtml";
+}
+
+<div class="card" style="margin-top:150px;">
+
+
+    <div class="container row text-center">
+        <div class="card col-6 ms-5 " style="width:auto;">
+            <h3>Details</h3>
+            <div class="card-body">
+                <p><strong>Full Name:</strong> @Model.FirstName @Model.LastName</p>
+                <p><strong>Email:</strong> @Model.Email</p>
+                <p><strong>Joined:</strong> @Model.DateCreated.ToString("MMMM dd, yyyy")</p>
+            </div>
+        </div>
+
+        <div class="card col-6 mx-5 " style="width:auto;">
+            <div class="card-body">
+                <span class="h4 text-warning">Items will be delivered to this number and address.</span>
+                <div class="text-end">
+                    <a asp-controller="Account" asp-action="EditPhoneNumberAndAddress" asp-route-id="@Model.Id">
+                        <i class="fa-solid fa-pencil"></i>
+                    </a>
+
+                </div>
+                <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+                <p><strong>Address:</strong> @Model.Address, @Model.City, @Model.State</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center">
+        <div class="card-header">
+            <h5>Profile Details</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Full Name:</strong> @Model.FirstName @Model.LastName</p>
+            <p><strong>Email:</strong> @Model.Email</p>
+            <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+            <p><strong>Address:</strong> @Model.Address, @Model.City, @Model.State</p>
+            <p><strong>Joined:</strong> @Model.DateCreated.ToString("MMMM dd, yyyy")</p>
+        </div>
+    </div>
+    
+</div>
+

@@ -1,5 +1,6 @@
 ﻿using Core.Db;
 using Core.Models;
+using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -15,9 +16,35 @@ namespace BeezNest.Controllers
             this.db = db;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string? Id)
         {
-            return View();
+
+            if (string.IsNullOrEmpty(Id))
+            {
+                return NotFound();
+            }
+
+            var data = db.ApplicationUsers
+                .Where(u => u.Id == Id)
+                .Select(u => new ApplicationUserViewModel
+                {
+                    Id = u.Id,
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    PhoneNumber = u.PhoneNumber,
+                    Address = u.Address,
+                    Email = u.Email,
+                    DateCreated = u.DateCreated
+                })
+                .FirstOrDefault();
+
+            if (data == null)
+            {
+                return NotFound();
+            }
+
+            return View(data);
+
         }
 
         [HttpGet]
@@ -51,12 +78,12 @@ namespace BeezNest.Controllers
         public IActionResult PaymentHistory()
         {
             var user = User.Identity.Name;
-           if(user == null)
+            if (user == null)
             {
                 return RedirectToAction("Login", "Account");
             }
             var payments = db.Payments
-                .Where(x => x.Active && x.Client.Email == user)             
+                .Where(x => x.Active && x.Client.Email == user)
                 .Select(s => new PaymentsViewModel
                 {
                     Id = s.Id,
@@ -65,7 +92,7 @@ namespace BeezNest.Controllers
                     Stocks = JsonConvert.DeserializeObject<List<Stock>>(s.Stock),
                     PaymentDate = s.PaymentDate,
                     PaymentStatus = s.PaymentStatus,
-                    
+
                 }).ToList();
             return View(payments);
         }
@@ -120,7 +147,7 @@ namespace BeezNest.Controllers
                 GrandTotal = details.GrandTotal,
                 ClientId = clientId,
                 Active = true,
-                ProofOfPaymentPath = proofOfPaymentPath, 
+                ProofOfPaymentPath = proofOfPaymentPath,
                 PaymentStatus = PaymentStatus.Pending
             };
 
@@ -145,7 +172,7 @@ namespace BeezNest.Controllers
                 UpdateWarehouseInventory(order);
                 order.PaymentStatus = PaymentStatus.Confirm;
                 db.SaveChanges();
-            }          
+            }
 
             return RedirectToAction("ClientOrders", "Orders");
         }
@@ -158,7 +185,7 @@ namespace BeezNest.Controllers
             var stocksFromPayment = JsonConvert.DeserializeObject<List<Stock>>(paymentDetails.Stock);
             if (stocksFromPayment == null || !stocksFromPayment.Any())
                 return;
-   
+
             var productNames = stocksFromPayment.Select(stock => stock.Name).Distinct().ToList();
             var productsInShop = db.UploadProducts.Where(p => productNames.Contains(p.ProductsModel)).ToList();
 
@@ -181,14 +208,14 @@ namespace BeezNest.Controllers
 
 
         [HttpGet]
-         public IActionResult DeclineOrderPayment(int Id)
+        public IActionResult DeclineOrderPayment(int Id)
         {
             var order = db.Payments.FirstOrDefault(p => p.Active && p.PaymentStatus == PaymentStatus.Pending && p.Id == Id);
 
             if (order == null) return RedirectToAction("ClientOrders", "Orders");
 
             order.PaymentStatus = PaymentStatus.Decline;
-            db.SaveChanges(); 
+            db.SaveChanges();
 
             return RedirectToAction("ClientOrders", "Orders");
         }
