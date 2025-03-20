@@ -2,6 +2,7 @@
 using Core.Models;
 using Core.ViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -10,10 +11,12 @@ namespace BeezNest.Controllers
     public class PaymentController : Controller
     {
         private readonly ApplicationDbContext db;
+        private readonly IHubContext<OrderNotificationHub> _hubContext;
 
-        public PaymentController(ApplicationDbContext db)
+        public PaymentController(ApplicationDbContext db, IHubContext<OrderNotificationHub> hubContext)
         {
             this.db = db;
+            _hubContext = hubContext; 
         }
 
         public IActionResult Index(string? Id)
@@ -99,83 +102,119 @@ namespace BeezNest.Controllers
 
 
 
-        [HttpPost]
-        public JsonResult UserCheckOut(string stockDetails, IFormFile proofOfPayment)
-        {
-            if (string.IsNullOrEmpty(stockDetails))
+            [HttpPost]
+            public JsonResult UserCheckOut(string stockDetails, IFormFile proofOfPayment)
             {
-                return Json(new { isError = true, msg = "Error Occurred" });
-            }
-
-            var details = JsonConvert.DeserializeObject<PaymentsViewModel>(stockDetails);
-            if (details == null)
-            {
-                return Json(new { isError = true, msg = "Error Occurred" });
-            }
-
-            var clientId = db.ApplicationUsers.FirstOrDefault(x => x.Email == details.ClientEmail)?.Id;
-            if (string.IsNullOrEmpty(clientId))
-            {
-                return Json(new { isError = true, msg = "Error Occurred" });
-            }
-
-            // Handle file upload
-            string proofOfPaymentPath = null;
-            if (proofOfPayment != null && proofOfPayment.Length > 0)
-            {
-                var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
-                if (!Directory.Exists(uploadsFolder))
+                if (string.IsNullOrEmpty(stockDetails))
                 {
-                    Directory.CreateDirectory(uploadsFolder);
+                    return Json(new { isError = true, msg = "Error Occurred" });
                 }
 
-                var uniqueFileName = Guid.NewGuid().ToString() + "_" + proofOfPayment.FileName;
-                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
+                var details = JsonConvert.DeserializeObject<PaymentsViewModel>(stockDetails);
+                if (details == null)
                 {
-                    proofOfPayment.CopyTo(stream);
+                    return Json(new { isError = true, msg = "Error Occurred" });
                 }
 
-                proofOfPaymentPath = $"/uploads/{uniqueFileName}";
+                var clientId = db.ApplicationUsers.FirstOrDefault(x => x.Email == details.ClientEmail)?.Id;
+                if (string.IsNullOrEmpty(clientId))
+                {
+                    return Json(new { isError = true, msg = "Error Occurred" });
+                }
+
+                // Handle file upload
+                string proofOfPaymentPath = null;
+                if (proofOfPayment != null && proofOfPayment.Length > 0)
+                {
+                    var uploadsFolder = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/uploads");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + proofOfPayment.FileName;
+                    var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        proofOfPayment.CopyTo(stream);
+                    }
+
+                    proofOfPaymentPath = $"/uploads/{uniqueFileName}";
+                }
+
+                var payment = new Payments
+                {
+                    PaymentDate = DateTime.Now,
+                    Stock = details.StocksInString,
+                    GrandTotal = details.GrandTotal,
+                    ClientId = clientId,
+                    Active = true,
+                    ProofOfPaymentPath = proofOfPaymentPath,
+                    PaymentStatus = PaymentStatus.Pending
+                };
+
+                db.Add(payment);
+                db.SaveChanges();
+
+                // Get updated count of pending orders
+                var pendingOrdersCount = db.Payments.Count(p => p.PaymentStatus == PaymentStatus.Pending);
+
+                return Json(new { isError = false, msg = "Order Completed", orderCount = pendingOrdersCount });
             }
-
-            var payment = new Payments
-            {
-                PaymentDate = DateTime.Now,
-                Stock = details.StocksInString,
-                GrandTotal = details.GrandTotal,
-                ClientId = clientId,
-                Active = true,
-                ProofOfPaymentPath = proofOfPaymentPath,
-                PaymentStatus = PaymentStatus.Pending
-            };
-
-            db.Add(payment);
-            db.SaveChanges();
-
-            // Get updated count of pending orders
-            var pendingOrdersCount = db.Payments.Count(p => p.PaymentStatus == PaymentStatus.Pending);
-
-            return Json(new { isError = false, msg = "Order Completed", orderCount = pendingOrdersCount });
-        }
 
 
         [HttpGet]
-        public IActionResult ConfirmOrderPayment(int Id)
+        public async Task<IActionResult> ConfirmOrderPayment(int Id)
         {
             if (Id != 0)
             {
                 var order = db.Payments.FirstOrDefault(p => p.Active && p.PaymentStatus == PaymentStatus.Pending && p.Id == Id);
 
                 if (order == null) return RedirectToAction("ClientOrders", "Orders");
+
                 UpdateWarehouseInventory(order);
                 order.PaymentStatus = PaymentStatus.Confirm;
                 db.SaveChanges();
+
+                // Count remaining pending payments
+                int pendingPayments = db.Payments.Count(p => p.Active && p.PaymentStatus == PaymentStatus.Pending);
+
+                // Send notification to all admins
+                await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", pendingPayments);
+
             }
 
             return RedirectToAction("ClientOrders", "Orders");
         }
+
+        public IActionResult OrderNotifications()
+        {
+            int pendingOrders = db.Payments.Count(p => p.Active && p.PaymentStatus == PaymentStatus.Pending);
+            return View(pendingOrders);
+        }
+
+
+        [HttpGet]
+        public async Task<IActionResult> DeclineOrderPayment(int Id)
+        {
+            var order = db.Payments.FirstOrDefault(p => p.Active && p.PaymentStatus == PaymentStatus.Pending && p.Id == Id);
+
+            if (order == null) return RedirectToAction("ClientOrders", "Orders");
+
+            order.PaymentStatus = PaymentStatus.Decline;
+            db.SaveChanges();
+
+            // Count remaining pending payments
+            int pendingPayments = db.Payments.Count(p => p.Active && p.PaymentStatus == PaymentStatus.Pending);
+
+            // Send notification to all admins
+            await _hubContext.Clients.All.SendAsync("ReceiveOrderUpdate", pendingPayments);
+
+            return RedirectToAction("ClientOrders", "Orders");
+        }
+
+
 
         public void UpdateWarehouseInventory(Payments paymentDetails)
         {
@@ -204,20 +243,6 @@ namespace BeezNest.Controllers
             }
 
             db.SaveChanges();
-        }
-
-
-        [HttpGet]
-        public IActionResult DeclineOrderPayment(int Id)
-        {
-            var order = db.Payments.FirstOrDefault(p => p.Active && p.PaymentStatus == PaymentStatus.Pending && p.Id == Id);
-
-            if (order == null) return RedirectToAction("ClientOrders", "Orders");
-
-            order.PaymentStatus = PaymentStatus.Decline;
-            db.SaveChanges();
-
-            return RedirectToAction("ClientOrders", "Orders");
         }
 
     }

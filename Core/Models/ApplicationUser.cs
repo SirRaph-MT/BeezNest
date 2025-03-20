@@ -17,6 +17,9 @@ namespace Core.Models
         public string? Address { get; set; }
         public bool Active { get; set; }
         public DateTime DateCreated { get; set; }
+		public int DropdownId { get; set; }
+        [ForeignKey(nameof(DropdownId))]
+		public virtual Dropdown? Dropdown { get; set; }
        
         [NotMapped]
         public string? Role { get; set; }

@@ -395,10 +395,8 @@ document.querySelector('.iconShopping').addEventListener('click', function () {
     }
 });
 
-
 function checkOutNow(userEmail) {
     debugger;
-
 
     const cartItems = JSON.parse(localStorage.getItem('cart')) || [];
     if (cartItems.length === 0) {
@@ -451,17 +449,15 @@ function checkOutNow(userEmail) {
         contentType: false,
         success: function (result) {
             if (!result.isError) {
-
+                // Clear cart
                 localStorage.removeItem('cart');
 
-
+                // Update order count in localStorage
                 if (result.orderCount !== undefined) {
-                    debugger
-                    const orderCountBadge = document.getElementById('orderCount');
-                    if (orderCountBadge) {
-                        orderCountBadge.textContent = result.orderCount++;
-                    }
+                    localStorage.setItem('orderCount', result.orderCount);
+                    updateOrderBadgeCount(result.orderCount);
                 }
+
                 successAlertWithRedirect(result.msg, "/Payment/PaymentHistory");
             } else {
                 errorAlert(result.msg);
@@ -472,6 +468,27 @@ function checkOutNow(userEmail) {
         }
     });
 }
+
+// Ensure order badge updates on page load
+document.addEventListener("DOMContentLoaded", function () {
+    const storedOrderCount = localStorage.getItem('orderCount') || 0;
+    updateOrderBadgeCount(parseInt(storedOrderCount));
+});
+
+// Function to update the Orders badge
+function updateOrderBadgeCount(orderCount) {
+    const badge = document.getElementById('orderCount');
+
+    if (badge) {
+        if (orderCount === 0) {
+            badge.style.display = 'none';
+        } else {
+            badge.textContent = orderCount;
+            badge.style.display = 'inline-block';
+        }
+    }
+}
+
 
 
 

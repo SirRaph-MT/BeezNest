@@ -7,6 +7,7 @@ using Core.Db;
 using Core.Models;
 using System;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -19,6 +20,9 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<IAdminHelper, AdminHelper>();
 
 builder.Services.AddScoped<IUserHelper, UserHelper>();
+
+builder.Services.AddSignalR();
+
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -55,6 +59,9 @@ app.UseRouting();
 app.UseSession();
 
 app.UseAuthorization();
+
+app.MapHub<OrderNotificationHub>("/orderNotificationHub");
+
 
 app.MapControllerRoute(
     name: "default",

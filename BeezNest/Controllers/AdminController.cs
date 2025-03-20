@@ -9,12 +9,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BeezNest.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : BaseController
     {
         private readonly ApplicationDbContext _db;
         private readonly IWebHostEnvironment webHostEnvironment;
 
-        public AdminController(ApplicationDbContext db, IWebHostEnvironment webHostEnvironment)
+        public AdminController (ApplicationDbContext db, IWebHostEnvironment webHostEnvironment) : base(db)
         {
             _db = db;
             this.webHostEnvironment = webHostEnvironment;

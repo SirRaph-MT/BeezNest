@@ -363,3 +363,4 @@ MigrationBackup/
 FodyWeavers.xsd
 /BeezNest/wwwroot/StockPhotos
 /BeezNest/wwwroot/uploads
+/Core/Models/Cart.cs

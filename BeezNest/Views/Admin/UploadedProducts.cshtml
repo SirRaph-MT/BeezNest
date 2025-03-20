@@ -6,55 +6,34 @@
 <style>
     .interactive-img {
         transition: transform 0.2s;
+        max-width: 80px;
+        cursor: pointer;
     }
 
         .interactive-img:hover {
             transform: scale(1.1);
         }
 
-    /* Modal Style */
+    /* Responsive Button Group */
+    .btn-group {
+        flex-wrap: wrap;
+    }
+
+    /* Modal Styling */
     .modal-content {
-        max-width: 80%;
+        max-width: 90%;
         margin: auto;
-        background-color: #fff;
         border-radius: 10px;
     }
 
     .modal-header {
         background-color: #007bff;
         color: white;
-        text-align: center;
-        font-size: 1.25rem;
-    }
-
-    .modal-body {
-        font-size: 1rem;
-        color: #333;
-        padding: 20px;
-        background-color: #f9f9f9;
     }
 
     .modal-footer {
         background-color: #f1f1f1;
-        text-align: right;
     }
-
-    /* Optional: Add a shadow effect */
-    .modal-dialog {
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Button Style */
-    .btn-info {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: white;
-    }
-
-        .btn-info:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
 </style>
 
 <div class="container p-3">
@@ -76,15 +55,15 @@
 }
 else
 {
-    <div class="table table-responsive table-bordered">
-        <table id="Productstable" class="">
-            <thead>
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
                 <tr>
                     <th>Product Model</th>
                     <th>Price</th>
                     <th>Specifications</th>
                     <th>Product Images</th>
-                    <th>Descriptions</th>
+                    <th>Description</th>
                     <th>Number of Items</th>
                     <th>Date Sampled</th>
                     <th>Actions</th>
@@ -97,45 +76,40 @@ else
                         <td>@product.ProductsModel</td>
                         <td>₦@(product.Price.HasValue ? product.Price.Value.ToString("N2") : "#0.00")</td>
                         <td>@product.Specifications</td>
-                        @if (string.IsNullOrEmpty(product.UploadedImage))
-                        {
-                            <td></td>
-                        }
-                        else
-                        {
-                            <td>
-                                <a asp-controller="Admin" asp-action="UploadedImages" asp-route-productId="@product.Id" style="color: inherit;">
-                                    <img src="@product.UploadedImage" class="img-fluid interactive-img" width="100" style="cursor: pointer;" />
-                                </a>
-                            </td>
-                        }
-                        <!-- Description Button -->
                         <td>
-                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#descriptionModal-@product.Id">
-                                View Description
+                            @if (!string.IsNullOrEmpty(product.UploadedImage))
+                            {
+                                <a asp-controller="Admin" asp-action="UploadedImages" asp-route-productId="@product.Id">
+                                    <img src="@product.UploadedImage" class="interactive-img" />
+                                </a>
+                            }
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#descModal-@product.Id">
+                                View
                             </button>
                         </td>
-                        <td class="text-center h3">@product.NumberOfItem</td>
+                        <td>@product.NumberOfItem</td>
                         <td>@product.DateSampled?.ToString("dd-MMM-yyyy")</td>
                         <td>
-                            <div class="btn-group flex-wrap" role="group">
-                                <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="EditProduct" class="btn btn-primary">
+                            <div class="btn-group">
+                                <a asp-controller="Admin" asp-action="EditProduct" asp-route-id="@product.Id" class="btn btn-primary btn-sm">
                                     <i class="fa-solid fa-pen-to-square"></i>
                                 </a>
-                                <a asp-controller="Admin" asp-route-id="@product.Id" asp-action="DeleteProduct" class="btn btn-danger">
+                                <a asp-controller="Admin" asp-action="DeleteProduct" asp-route-id="@product.Id" class="btn btn-danger btn-sm">
                                     <i class="fa-solid fa-trash"></i>
                                 </a>
                             </div>
                         </td>
                     </tr>
 
-                    <!-- Modal for Description -->
-                    <div class="modal fade" id="descriptionModal-@product.Id" tabindex="-1" aria-labelledby="descriptionModalLabel-@product.Id" aria-hidden="true">
+                    <!-- Description Modal -->
+                    <div class="modal fade" id="descModal-@product.Id" tabindex="-1">
                         <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="descriptionModalLabel-@product.Id">Product Description</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <h5 class="modal-title">Product Description</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                 </div>
                                 <div class="modal-body">
                                     <p>@product.Description</p>
@@ -167,8 +141,8 @@ else
                 "pageLength": 5,
                 "lengthMenu": [5, 10, 25, 50],
                 "searching": true,
-                "ordering": true,
-                "info": true,
+                "ordering": false,
+                "info": false,
                 "responsive": true
             });
         });

@@ -38,6 +38,18 @@
                 .sidebar a:hover {
                     background-color: #ddd;
                 }
+
+        .order {
+            background-color: red;
+            color: white;
+            font-size: 12px;
+            border-radius: 50%;
+            padding: 3px 7px;
+            margin-left: -10px;
+            position: relative;
+            top: -5px;
+            left: -5px;
+        }
     </style>
     <script>
         function errorAlert(message) {
@@ -150,16 +162,24 @@
                         <span><i class="fa-solid fa-bars"></i></span>
                     </button>
 
-                    <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Admin" asp-action="UploadedProducts">
                         <img src="~/StockPhotos/websiteLogo.jpeg" alt="BeezNest Logo" class="img-fluid"
                              style="height: 40px; width: auto; margin-right: 10px;">
                         <span class="fw-bold text-dark">BeezNest</span>
                     </a>
                 </div>
 
-             
+
                 <!-- Login and Register Links -->
                 <ul class="navbar-nav d-flex flex-row align-items-center">
+                    <a class="h4 text-dark mx-3" asp-area="" asp-controller="Orders" asp-action="ClientOrders">
+                        <i class="fa-sharp fa-solid fa-bell"></i>
+                        @if (ViewBag.PendingOrdersCount != null && ViewBag.PendingOrdersCount > 0)
+                        {
+                            <span class="order">@ViewBag.PendingOrdersCount</span>
+                        }
+                     
+                    </a>
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="nav-item d-flex align-items-center">
@@ -174,7 +194,7 @@
                     {
                         <li class="nav-item">
                             <a class="nav-link d-flex align-items-center" asp-area="" asp-controller="Account" asp-action="Login">
-                                <i class="fa-solid fa-sign-in-alt me-2"></i> Login
+                                 Login
                             </a>
                         </li>
                         <li class="nav-item ms-2">
@@ -187,14 +207,6 @@
             </div>
         </nav>
     </header>
-
-
-
-
-
-
-
-
     <div class="sidebar show">
         <div class="offcanvas-header">
             <a asp-area="" asp-controller="Home" asp-action="Index">
@@ -221,19 +233,19 @@
                 <i class="fa-brands fa-product-hunt me-3"></i>Uploaded Products
             </a>
             <a asp-area="" asp-controller="Orders" asp-action="ClientOrders" class="position-relative">
-                <i class="fa-sharp fa-solid fa-file-lines me-3"></i>Orders
-                <span id="orderCount" class="badge bg-danger position-absolute top-0 start-100 translate-middle"></span>
+                <i class="fa-solid fa-cart-shopping"></i>       
+                @if (ViewBag.PendingOrdersCount != null && ViewBag.PendingOrdersCount > 0)
+                {
+                    <span class="badge bg-danger">@ViewBag.PendingOrdersCount</span>
+                }
+                Orders
             </a>
-            <a asp-area="" asp-controller="Questions" asp-action="CreateQuestions">
-                <i class="fa-brands fa-product-hunt me-3"></i>Add Q & A
-            </a>
+
             <a asp-area="" asp-controller="Questions" asp-action="Index">
                 <i class="fa-brands fa-product-hunt me-3"></i>Asked Q & A
             </a>
         </div>
     </div>
-
-
 
 
 

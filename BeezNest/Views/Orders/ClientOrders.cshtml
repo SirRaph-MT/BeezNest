@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Core.Models.PaymentsViewModel>
+﻿@model Core.Models.PaymentDetailViewModels
+
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
 }
@@ -36,81 +37,102 @@
         margin-top: 3px;
     }
 
+    .proof-of-payment-img {
+        width: 100px;
+        height: auto;
+        cursor: pointer;
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .proof-of-payment-img:hover {
+            transform: scale(1.1);
+        }
 </style>
-<h2 style="margin-top:120px;" class=" text-center">Orders History</h2>
 
-@if (!Model.Any())
+<h2 style="margin-top:120px;" class="text-center">Orders History</h2>
+
+<div class="d-flex justify-content-between">
+    <div>
+        <span id="orderNotificationBadge" class="badge bg-danger">@Model.PaymentList.Count()</span>
+        <p>Total Orders</p>
+    </div>
+    <div>
+        @if (Model.PendingOrdersCount == 0)
+        {
+            <p>No unattended Orders</p>
+        }
+        else
+        {
+            <h5>You Have </h5>
+            <span id="orderNotificationBadge" class="badge bg-danger">@Model.PendingOrdersCount</span>
+            <h5> Pending Order/s</h5>
+        }
+    </div>
+</div>
+
+@if (!Model.PaymentList.Any())
 {
-    <h5 style="margin-top:100px;" class="my-5 text-center">No Order yet</h5>
+    <h5 class="my-5 text-center">No Order yet</h5>
 }
-
 else
 {
     <table class="table table-bordered table-responsive tableCenter">
-        <thead>
+        <thead class="table-dark">
             <tr>
-                <th>s/n</th>
+                <th>#</th>
                 <th>Order Date</th>
                 <th>Amount Paid</th>
-                <th>Proof of payment</th>
-                <th>Customers Name</th>
-                <th>Customers Address</th>
-                <th>product Ordered</th>
+                <th>Proof of Payment</th>
+                <th>Customer Name</th>
+                <th>Customer Address</th>
+                <th>Product Ordered</th>
                 <th>Status</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var order in Model)
+            @foreach (var order in Model.PaymentList)
             {
                 <tr>
                     <td>@order.Id</td>
-
                     <td>@order.PaymentDate?.ToString("dd-MMM-yyyy")</td>
                     <td>₦@order.GrandTotal</td>
                     <td>
                         @if (!string.IsNullOrEmpty(order.ProofOfPaymentPath))
                         {
-                            <img src="@order.ProofOfPaymentPath" alt="Proof of Payment" style="width: 100px; height: auto;" />
+                            <img src="@order.ProofOfPaymentPath" alt="Proof of Payment" class="proof-of-payment-img" data-bs-toggle="modal" data-bs-target="#proofModal" onclick="viewProof('@order.ProofOfPaymentPath')" />
                         }
                         else
                         {
                             <p>No proof uploaded</p>
                         }
                     </td>
-
                     <td>@order.User</td>
                     <td>
-                        <h3>@order.PhoneNumber</h3> <hr />
+                        <h3>@order.PhoneNumber</h3>
+                        <hr />
                         @order.Address
                     </td>
                     <td>
-                        <button type="button" class="btn btn-primary view-orders-btn"
-                                onclick="viewProduct('@order.Id', true)"
-                                data-bs-toggle="modal" data-bs-target="#orderModal">
+                        <button type="button" class="btn btn-primary view-orders-btn" onclick="viewProduct('@order.Id', true)" data-bs-toggle="modal" data-bs-target="#orderModal">
                             View Orders
                         </button>
                     </td>
                     <td>
                         @if (order.PaymentStatus == Core.Models.PaymentStatus.Pending)
                         {
-                            <div class="w-75 btn-group" role="group">
-                                <a asp-controller="Payment" asp-route-id="@order.Id" asp-action="ConfirmOrderPayment" class="btn btn-success mx-2">
-                                    Confirm
-                                </a>
-                                <a asp-controller="Payment" asp-route-id="@order.Id" asp-action="DeclineOrderPayment" class="btn btn-danger mx-2">
-                                    Decline
-                                </a>
+                            <div class="btn-group" role="group">
+                                <a asp-controller="Payment" asp-route-id="@order.Id" asp-action="ConfirmOrderPayment" class="btn btn-success mx-2">Confirm</a>
+                                <a asp-controller="Payment" asp-route-id="@order.Id" asp-action="DeclineOrderPayment" class="btn btn-danger mx-2">Decline</a>
                             </div>
                         }
                         else if (order.PaymentStatus == Core.Models.PaymentStatus.Confirm)
                         {
-                            <p>Confirmed<span class="badge bg-success">✔</span></p>
+                            <p>Confirmed <span class="badge bg-success">✔</span></p>
                         }
                         else
                         {
-                            <p>Declined<span class="badge bg-danger">✖</span></p>
+                            <p>Declined <span class="badge bg-danger">✖</span></p>
                         }
-
                     </td>
                 </tr>
             }
@@ -118,12 +140,11 @@ else
     </table>
 }
 
-
 <div class="modal fade" id="orderModal" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="orderModalLabel">Ordered Items</h5>
+                <h5 class="modal-title">Ordered Items</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -147,3 +168,28 @@ else
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="proofModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Proof of Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center">
+                <img id="proofImage" src="" class="img-fluid" alt="Proof of Payment" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function viewProof(imagePath) {
+        document.getElementById('proofImage').src = imagePath;
+    }
+</script>
+
+

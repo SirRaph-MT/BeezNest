@@ -20,6 +20,12 @@ namespace Core.Models
         public PaymentStatus PaymentStatus { get; set; }
     }
 
+    public class PaymentDetailViewModels
+    {
+        public IEnumerable<PaymentsViewModel> PaymentList { get; set; }
+        public int PendingOrdersCount { get; set; } = 0;
+    }
+
     public class PaymentsViewModel
     {
         public int Id { get; set; }
@@ -35,7 +41,6 @@ namespace Core.Models
         public string? Address { get; set; }
         public string? PhoneNumber { get; set; }
         public double? Quantity { get; set; }
-
         public string? ProofOfPaymentPath { get; set; }
         public PaymentStatus PaymentStatus { get; set; }
     }
