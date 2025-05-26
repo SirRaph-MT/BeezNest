@@ -111,7 +111,6 @@ function showSidebar() {
 
 
 function addToCart(button) {
-    debugger
     const storedCartItems = JSON.parse(localStorage.getItem("cart")) || [];
 
     let productCard, productId, maxStock, price, quantity, productModel, specifications, imageUrl, userId, selectedColor;
@@ -121,7 +120,7 @@ function addToCart(button) {
         productCard = button.closest(".col-12");
         productId = productCard.querySelector(".productId").value;
         maxStock = parseInt(productCard.querySelector(".numberOfItem").textContent.replace("Item left: ", "").trim()) || 0;
-        price = productCard.querySelector(".price").textContent.replace("Price: ₦", "").trim();
+        price = productCard.querySelector(".price").textContent.replace("Price: ₦", "").replace(/,/g, "").trim();
         quantity = parseInt(productCard.querySelector(".quantityInput").value, 10) || 1;
         productModel = productCard.querySelector(".card-title").textContent.trim();
         specifications = productCard.querySelector(".specifications").textContent.replace("Specifications: ", "").trim();
@@ -131,12 +130,12 @@ function addToCart(button) {
         // Product details page context
         productId = document.querySelector("#productId").value;
         maxStock = parseInt(document.querySelector("#numberOfItem").textContent.replace("Available Items: ", "").trim()) || 0;
-        price = document.querySelector("#price").textContent.replace("Price: ₦", "").trim();
+        price = document.querySelector("#price").textContent.replace("Price: ₦", "").replace(/,/g, "").trim();
         quantity = parseInt(document.querySelector("#quantityInput").value, 10) || 1;
         productModel = document.querySelector("#prodModel").textContent.replace("Product: ", "").trim();
         specifications = document.querySelector("#spec").textContent.replace("Specifications: ", "").trim();
         imageUrl = document.querySelector("#mainImage").src || "default_image_url";
-        selectedColor = document.querySelector("#colorSelect")?.value || "No Color Selected"; // Allow color selection
+        selectedColor = document.querySelector("#colorSelect")?.value || "No Color Selected";
     }
 
     userId = document.querySelector("#Email")?.textContent.trim() || "Guest";
@@ -154,15 +153,15 @@ function addToCart(button) {
         UserId: userId,
     };
 
-    // Check if the product with the same ID and color already exists in the cart
+    // Check if the product with the same ID exists in the cart (ignore Color)
     const existingIndex = storedCartItems.findIndex(
-        item => item.UploadProductId === cartItem.UploadProductId && item.Color === cartItem.Color
+        item => item.UploadProductId === cartItem.UploadProductId
     );
 
     let currentTotalQuantity = 0;
 
     if (existingIndex !== -1) {
-        // If the product exists, update the quantity
+        // If the product exists, update the quantity and keep the latest color
         currentTotalQuantity = storedCartItems[existingIndex].Quantity + quantity;
 
         if (currentTotalQuantity > maxStock) {
@@ -171,6 +170,8 @@ function addToCart(button) {
         }
 
         storedCartItems[existingIndex].Quantity = currentTotalQuantity;
+        // Update color to the latest selection (from details page if applicable)
+        storedCartItems[existingIndex].Color = selectedColor;
     } else {
         // If the product does not exist, check stock and add it
         if (quantity > maxStock) {
