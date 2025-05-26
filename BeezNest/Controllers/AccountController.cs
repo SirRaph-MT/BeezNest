@@ -131,7 +131,6 @@ namespace BeezNest.Controllers
                 }
                 else if (result.IsNotAllowed)
                 {
-                    TempData["ErrorMessage"] = "Your account is not enabled. Please contact support.";
                 }
                 else
                 {
@@ -178,6 +177,7 @@ namespace BeezNest.Controllers
 
         }
 
+        [HttpGet]
         public IActionResult Profile()
         {
 
@@ -254,6 +254,7 @@ namespace BeezNest.Controllers
 
             user.PhoneNumber = model.PhoneNumber;
             user.Address = model.Address;
+            user.Email = model.Email;
 
             _context.Users.Update(user);
             _context.SaveChanges();
